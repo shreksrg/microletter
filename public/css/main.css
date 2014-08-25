@@ -1,0 +1,133 @@
+/*------------------------------------------------------------------------
+ * Copyright (c) 2014 hailiang All rights reserved. by Jackal
+------------------------------------------------------------------------*/
+
+/* 移动设备 */
+@media only screen and (min-width: 320px) and (max-width: 480px) {
+/* comon */
+*{margin:0;padding:0}
+li{list-sytle:none}
+a{color:#333}
+html ,body {height:100%;}
+body{ font:12px/1.5 '微软雅黑' ;margin:0;padding:0;height: 100%;background:url(../img/bg.jpg);background-size:27px 27px;color:#333}
+button.btn{width:90%;height:40px;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #ff723e), color-stop(1, #ff4803)); /*linear-gradient(0deg,#ff4803,#ff723e);*/border:0;border-radius:5px;margin:20px auto;display:block;color:white;font-size:16px}
+a{ text-decoration:none}
+/* index */
+.indexbg{position: absolute;width:100%;height:100%;background:url(../img/indexbg.png) no-repeat;background-size:568px 568px; background-position: 50% 50%; display:none;}
+.dismiss{-webkit-animation: shine1 .8s ease-out 0s 1 forwards;}
+@-webkit-keyframes shine1 {
+	0% {-webkit-transform:scale(1);opacity:1}
+	100%{-webkit-transform:scale(2);opacity:0}
+}
+.page{width:100%;overflow:hidden;border-top:2px #ff5412 solid;display:none}
+.banner{width:100%;overflow:hidden;margin:0 0 20px 0}
+.banner img{width:100%;height:auto}
+.tableview{width:100%;overflow:hidden;}
+.tableview section{width:100%;height:82px;border-bottom:1px #ecea93 solid;margin:0 0 20px 0;}
+.tableview section.status1{background:url(../img/status1.png) no-repeat;background-size:62px 26px;background-position: 95% 20px;}
+.tableview section.status2{background:url(../img/status2.png) no-repeat;background-size:62px 26px;background-position: 95% 20px;}
+.tableview section.status3{background:url(../img/status3.png) no-repeat;background-size:62px 26px;background-position: 95% 20px;}
+.tableview section.status4{background:url(../img/status4.png) no-repeat;background-size:62px 26px;background-position: 95% 20px;}
+.tableview section.fix{background:#ecea93;padding:20px 0 10px 0;}
+
+.tableview section h2{width:60%;height:20px;font-size:14px;margin:0 0 10px 110px;float:left;clear:both;}
+.tableview section div{width:60%;height:20px;font-size:12px;margin:0 0 0 110px;line-height:20px;float:left;clear:both}
+.price{color:#0090f5;font-size:16px}
+.tableview section img.pic{position: absolute;width:71px;height:71px;padding:1px;border:1px #ccc solid;margin-left:20px}
+
+/* detail */
+.itemdetail_banner, .itemdetail_pic{width:100%;overflow:hidden;margin:0 ;background:#0C3}
+.itemdetail_banner img, .itemdetail_pic img{width:100%;height:auto}
+.itemdetail_text{width:95%;overflow:hidden;border-top:1px #ecea93 solid;padding:20px 0 20px 5%}
+.itemdetail_text h2{width:90%;height:30px;font-size:14px;float:left;clear:both;}
+.itemdetail_text div{width:90%;height:30x;font-size:12px;line-height:20px;float:left;clear:both;}
+.itemdetail_text a{position: absolute;display:block;width:110px;height:35px;background:url(../img/buybtn.png) no-repeat;background-size:110px 35px;margin:40px 0 0 58%;}
+
+.itemdetail_title{width:95%;height:26px;margin-bottom:1px;border-bottom:1px #ecea93 solid;border-top:1px #ecea93 solid;padding-left:5%;font-size:14px;line-height:29px;}
+.itemdetail_title span{color:#999999;font-size:9px;margin-left:10px;}
+
+/* submit */
+.submit ul{clear:both;width:100%;display:block;margin:15px 0 0;}
+.submit textarea{min-width: 86%;min-height:60px;max-width: 90%;max-height:60px;border:1px #ccc solid; margin:6px auto 0 5%;display:block;border-radius:0;background:#fff;padding:6px 2%}
+.submit input[type=text]{width:86%;height:32px;border:1px #ccc solid; margin:10px auto 0 5%;display:block;border-radius:0;padding:0 2%}
+.submit input[type=text].code{width:46%;}
+.submit label{margin-left:5%}
+.submit button.resend{width:36%;height:34px;background:#f6f5b5;border:0;float:right;margin:-34px 5% 0 0;font-size:14px;color:#333}
+
+/* confirm *//* support */
+header{width:90%;margin:0 auto;text-align:center}
+header h4{text-align:left;color:#666;margin:15px 0;}
+header h3{margin:0 0 20px;}
+.time, .information, .conts{width:70%;overflow:hidden;margin:0 auto 30px 8%;line-height:20px;padding-left:60px;}
+.time{background:url(../img/icon_clock.png) no-repeat 0 5%;background-size:31px 32px;}
+.information{background:url(../img/icon_person.png) no-repeat 0 5%;background-size:37px 34px;}
+.conts{background:url(../img/icon_star.png) no-repeat 0 5%;background-size:37px 34px;}
+.time span, .information span{font-size:16px;color:#ff4702}
+.information span.tip{line-height:50px;color:#c6c45f;font-size:11px;clear:both;display:block}
+.gohome{width:80%;text-align:center;display:block;margin:20px auto;}
+.line_box{width:80%;margin:0 auto;clear:both}
+.line_box .disagree, .line_box .badguy{width:48%;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #23b4ff), color-stop(1, #009dee));margin:20px 0;float:left}
+.line_box .agree, .line_box .goodguy{width:48%;margin:20px 0;float:right}
+.line_box span{width:48%;overflow:hidden;display:block;line-height:20px;text-align:center;font-size:16px;margin:0 0 20px 0}
+.goodguynum{float:left;color:#ff6228;}
+.badguynum{float:right;color:#08a4f6;}
+.sharetipmask{position: absolute;top:15px;right:-220px;width:200px;height:60px;padding:0 10px;background:url(../img/sharetip.png) no-repeat right 0;background-size:250px 60px;background-color:rgba(0,0,0,0.8);border-radius:15px 0 0 15px;display:none;-webkit-animation: Tips1 2s ease-out 2s 1 forwards;}
+@-webkit-keyframes Tips1 {
+	0% {right:-220px;opacity:0;}
+	20%{right:0;opacity:1}
+	80%{right:0;opacity:1}
+	100% {right:0;opacity:0}
+}
+
+/* login */
+.loginbg{position: absolute;width:100%;height:100%;background:url(../img/loginbg.png) no-repeat;background-size:568px 568px; background-position: 50% 50%; display:none;}
+.loginbox{width:90%;overflow:hidden;margin:70% auto}
+.loginbox input[type=text]{width:180px;height:35px;border:2px #4d1203 solid;border-radius:7px;margin:0 auto 10px;display:block;padding:0 0 0 60px;}
+.loginbox input[type=text].username{background:#fff url(../img/usernamebg.png) no-repeat 10px 1px;background-size:44px 35px; }
+.loginbox input[type=text].password{background:#fff url(../img/passwordbg.png) no-repeat 10px 1px;background-size:44px 35px; }
+.loginbox button{width:244px;height:35px;border:2px #4d1203 solid;border-radius:7px;margin:0 auto;display:block;color:#4d1203;font-size:14px;background:#fff url(../img/loginbtnbg.png);background-size:1px 35px;}
+.loginbox a{width:244px;text-align:center;display:block;margin:20px auto;color:#fff}
+
+.show{display:block}
+
+
+/* agree *//* disagree *//* status *//* success *//* fail */
+.disagreetitle, .agreetitle, .statustitle, .successtitle, .failtitle{width:80%;margin:20px auto 40px;overflow:hidden;padiding:100px 0 0;text-align:center;padding:90px 10% 0 }
+.disagreetitle{background:url(../img/disagreeface.png) no-repeat center 10px;background-size:50px 58px;}
+.agreetitle{background:url(../img/agreeface.png) no-repeat center 10px;background-size:50px 58px;}
+.statustitle{background:url(../img/noface.png) no-repeat center 10px;background-size:62px 61px;}
+.statustitle.fix{padding-top:0;background:url()}
+.successtitle{background:url(../img/successface.png) no-repeat center 10px;background-size:50px 58px;}
+.failtitle{background:url(../img/failface.png) no-repeat center 10px;background-size:50px 58px;}
+.disagreetitle span, .agreetitle span, .statustitle span, .successtitle span, .failtitle span{font-size:16px;color:#0090f5}
+.delivertips{width:90%;margin:0 auto;text-align:center;font-size:14px;}
+
+/*comment*/
+.comment{width:100%;overflow:hidden;}
+.comment ul{width:90%;overflow:hidden;padding:10px 5%;}
+.comment ul:nth-child(odd) {background:#f6f5b5;border-bottom:1px #ecea93 solid;border-top:1px #ecea93 solid;}
+.comment ul h2{width:100%;height:20px;overflow:hidden;line-height:20px;font-size:12px;margin:0 0 10px 0}
+.comment ul h2 span{float:right;color:#666;}
+.comment ul li{width:100%;overflow:hidden;}
+}
+
+/* 兼容iphone4/4s */
+@media (device-height:480px) and (-webkit-min-device-pixel-ratio:2){
+}
+
+/* 兼容iphone5 */
+@media (device-height:568px) and (-webkit-min-device-pixel-ratio:2){
+.loginbox{margin:90% auto}
+}
+
+/* 平板之类的宽度 1024 或PC设备 */
+@media only screen and (min-width: 481px){
+}
+
+/* 竖屏 */
+@media screen and (orientation:portrait) and (max-width: 720px){
+}
+
+/* 横屏 */
+@media screen and (orientation:landscape){
+}
