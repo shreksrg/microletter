@@ -158,7 +158,6 @@ class Order_model extends CI_Model
         else return $sn;
     }
 
-
     /**
      * 获取订单商品
      */
@@ -343,7 +342,6 @@ class Order_model extends CI_Model
     {
         $orderId = (int)$orderId;
         $orderObj = $this->getOrder($orderId);
-
     }
 
     /**

@@ -83,8 +83,8 @@ class Order extends MicroController
     public function status()
     {
         $data = $this->_modelOrder->getStatus($this->_user);
-        /// $data['info']['fullname']
-        CView::show('order/status_on', $data);
+        $state = $data['state'];
+        CView::show('order/status_' . $state, $data);
     }
 
     /**
