@@ -374,6 +374,7 @@ class Order_model extends CI_Model
             $diffTime = $orderRow->expire - time();
             //正在进行中的订单
             if ($orderRow->status == 1 && $diffTime > 0) {
+                $data['state'] = 'on';
                 $data['info'] = $this->getOrderInfo($orderId); //订单详情
                 $sql = "select count(*) as num from mic_comment where isdel=0 and pay_id=0 and type=0 and order_id=$orderId";
                 $query = $this->db->query($sql);
@@ -384,12 +385,21 @@ class Order_model extends CI_Model
 
             //结束订单：已完成筹资
             if ($orderRow->status == 2 && $diffTime <= 0) {
+                $data['state'] = 'achieve';
                 $data['info'] = $this->getOrderInfo($orderId); //订单详情
                 //项目耗时统计
                 $time = Utils::getDiffTime($orderRow->add_time, $orderRow->achieve_time);
                 $data['useTime'] = $this->formatLeftTime($time);
                 return $data;
             }
+
+            //结束订单：未完成筹资
+            if ($orderRow->status == 3 && $diffTime <= 0) {
+                $data['state'] = 'fail';
+                $data['info'] = $this->getOrderInfo($orderId); //订单详情
+                return $data;
+            }
+
         }
     }
 
