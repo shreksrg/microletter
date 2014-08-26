@@ -175,7 +175,7 @@ class Order_model extends CI_Model
     {
         $detail = array();
         $orderId = (int)$orderId;
-        $sql = "select * from mic_order where isdel=0 and status=1 and id=$orderId limit 1";
+        $sql = "select * from mic_order where isdel=0 and id=$orderId limit 1";
         $query = $this->db->query($sql);
         $order = new ItemOrder($orderId, $query);
         return $order;

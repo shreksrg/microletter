@@ -34,4 +34,18 @@ class Comment_model extends CI_Model
         if ($newId < 0) $this->_errCode = 1001; //插入失败
         return $newId;
     }
+
+
+    public function getCommentsByOrderId($orderId, $type)
+    {
+        $sql = "select * from mic_comment where isdel=0 and order_id=? and type=?";
+        $query = $this->db->query($sql, array($orderId, $type));
+        if ($query->row()) {
+            foreach ($query->result() as $row) {
+                $diffTime = (time() - $row->add_time());
+                
+            }
+        }
+
+    }
 }

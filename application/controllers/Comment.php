@@ -46,13 +46,15 @@ class Comment extends MicroController
         $data = array();
         $orderId = (int)$this->input->get('id');
         $modOrder = CModel::make('order_model');
+
+
         $order = $modOrder->genOrder($orderId);
         if ($order->row) {
             $modItem = CModel::make('planItem_model');
             $planItem = $modItem->genItem($order->row->item_id);
             $data['quota'] = $planItem->row->quota; //限定支付总人数
             $data['supportNum'] = $modOrder->getSupports($orderId); //支付人数
-            $data['leftTime'] = $modOrder->formatLeftTime($order->getLeftTime()); //剩余时间
+            // $data['leftTime'] = $modOrder->formatLeftTime($order->getLeftTime()); //剩余时间
             $data['comments'] = $this->_modelComment->getCommentsByOrderId($orderId); // 订单评论列表
             CView::show('comment/show', $data);
         }
