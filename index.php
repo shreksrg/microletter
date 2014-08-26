@@ -25,6 +25,10 @@
  * @filesource
  */
 
+define('ROOT', __DIR__);
+
+require(ROOT . '/system/libraries/kint/Kint.class.php');
+
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
@@ -70,6 +74,7 @@ switch (ENVIRONMENT) {
         exit(1); // EXIT_ERROR
 }
 
+defined('SITE_URL') or define('SITE_URL', 'http://api.microletter.com/index.php');
 /*
  *---------------------------------------------------------------
  * SYSTEM FOLDER NAME

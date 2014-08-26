@@ -1,6 +1,6 @@
 <?php
 
-class FormValidation extends CComponent
+class FormValidation extends CCApplication
 {
     static public function make()
     {

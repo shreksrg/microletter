@@ -3,7 +3,6 @@
 
 class Order_model extends CI_Model
 {
-
     protected $_errCode = array('apply' => 0);
 
     /**
@@ -15,12 +14,11 @@ class Order_model extends CI_Model
     public function matchMobileCaptcha($mobile, $code)
     {
         $time = time();
-        $sql = "SELECT id FROM mic_mobile_captcha where isdel=0 and status=0 and expire<$time and mobile=? and code=? limit 1";
+        $sql = "SELECT id FROM mic_mobile_captcha where isdel=0 and type=1 and  status=0 and expire>=$time and mobile=? and code=? limit 1";
         $query = $this->db->query($sql, array($mobile, $code));
-
-        if ($query->num_rows > 0) {
+        if ($query->row()) {
             $id = $query->row()->id;
-            $this->db->query("update mic_mobile_captcha set status=1 where id=$id");
+            //$this->db->query("update mic_mobile_captcha set status=1 where id=$id");
             return true;
         }
         return false;
@@ -71,17 +69,18 @@ class Order_model extends CI_Model
     {
         $sn = $this->genOrderSn();
         $time = time();
-        $expire = $time + $itemObj->peroid * 3600;
+        $expire = $time + $itemObj->row->peroid * 3600;
         $values = array(
             'user_id' => $userId,
             'sn' => $sn,
             'item_id' => $itemObj->id,
-            'gross' => $itemObj->gross,
+            'gross' => $itemObj->row->gross,
             'expire' => $expire,
             'message' => $itemObj['message'],
             'status' => 0, //初始化为关闭状态
             'add_time' => $time,
         );
+
         $rt = $this->db->insert('mic_order', $values);
         if ($rt == true) {
             $orderId = $this->db->insert_id();
@@ -105,10 +104,13 @@ class Order_model extends CI_Model
             foreach ($itemObj->goodsRecs->result() as $row) {
                 $values[] = array(
                     'order_id' => $orderId,
+                    'item_id' => $itemObj->id,
                     'goods_id' => $row->goods_id,
                     'title' => $row->title,
                     'price' => $row->price,
+                    'price' => $row->price,
                     'quantity' => $row->quantity,
+                    'gross' => $itemObj->row->gross,
                 );
             }
             $return = $this->db->insert_batch('mic_order_goods', $values);
@@ -141,7 +143,8 @@ class Order_model extends CI_Model
 
     public function setErrCode($key, $value)
     {
-        return $this->_errCode[$key] = $value;
+        $this->_errCode[$key] = $value;
+        return false;
     }
 
     /**
@@ -151,47 +154,10 @@ class Order_model extends CI_Model
     {
         $sn = UUID::fast_uuid();
         $query = $this->db->query("select id from mic_order where sn=$sn limit 1");
-        if ($query->nums_row > 0) $this->genOrderSn();
+        if ($query->row()) $this->genOrderSn();
         else return $sn;
     }
 
-    public function getDetail($orderId)
-    {
-        $detail = array();
-
-        $sql = "select * from mic_order where isdel=0 and id=$orderId limit 1";
-        $query = $this->db->query($sql);
-        if ($query->num_rows > 0) {
-            $row = $query->row();
-            $detail['message'] = $row->message; //订单留言
-            $itemId = $row->item_id;
-
-            $modItem = CModel::make('planItem_model');
-            $planItem = $modItem->genItem($itemId);
-
-            //项目订单商品信息
-            $detail['goods'] = $this->getGoodsRecs($orderId)->row_array();
-
-            //截止时间
-            $detail['expire'] = date('m月d日 h:i', $row->expire);
-            $detail['leftDays'] = intval(($row->expire - time()) / 3600 * 24);
-
-            //筹集人数统计[未支持人数]
-            $quota = $planItem->row->quota;
-            $sql = "select count(*) as num from  mic_payment_item where isdel=0 and status=1 and order_id=$orderId";
-            $query = $this->db->query($sql);
-            $num = $query->row()->num;
-            $detail['lacks'] = $quota - $num;
-
-            //订单收件人信息
-            $sql = "select * from  mic_ship_address where isdel=0 and order_id=$orderId limit 1";
-            $query = $this->db->query($sql);
-            if ($query->num_rows > 0) {
-                $detail['consignee'] = $query->row_array();
-            }
-        }
-        return $detail;
-    }
 
     /**
      * 获取订单商品
@@ -236,7 +202,7 @@ class Order_model extends CI_Model
             $order['item'] = $planItem = $modItem->genItem($itemId); //订单项目
 
             //订单项目商品信息
-            $order['goods'] = $planItem->getGoodsRecs($itemId)->row_array();
+            $order['goods'] = $modItem->getGoodsRecs($itemId)->row_array();
 
             //订单支付统计信息
             $order['quota'] = $quota = $planItem->row->quota; //限定支付总人数
@@ -378,6 +344,53 @@ class Order_model extends CI_Model
         $orderId = (int)$orderId;
         $orderObj = $this->getOrder($orderId);
 
+    }
+
+    /**
+     * 获取订单发货信息
+     */
+    public function getShipInfo($orderId)
+    {
+        $info = array();
+        $sql = "select * from mic_ship_address where isdel=0 and order_id=? limit 1";
+        $query = $this->db->query($sql, array((int)$orderId));
+        if ($query->row())
+            $info = $query->row_array();
+        return $info;
+    }
+
+    /**
+     * 获取订单状态
+     */
+    public function getStatus($user)
+    {
+        $uid = $user->id;
+        $sql = "select * from mic_order where isdel=0 and user_id=? order by add_time desc limit 1";
+        $query = $this->db->query($sql, array($uid));
+        $orderRow = $query->row();
+        if ($orderRow) {
+            $orderId = $orderRow->id;
+            $order = new ItemOrder($orderId, $query);
+            $diffTime = $orderRow->expire - time();
+            //正在进行中的订单
+            if ($orderRow->status == 1 && $diffTime > 0) {
+                $data['info'] = $this->getOrderInfo($orderId); //订单详情
+                $sql = "select count(*) as num from mic_comment where isdel=0 and pay_id=0 and type=0 and order_id=$orderId";
+                $query = $this->db->query($sql);
+                $data['info']['abandon'] = (int)$query->row()->num; //放弃人数
+                $data['info']['consignee'] = $this->getShipInfo($orderId);
+                return $data;
+            }
+
+            //结束订单：已完成筹资
+            if ($orderRow->status == 2 && $diffTime <= 0) {
+                $data['info'] = $this->getOrderInfo($orderId); //订单详情
+                //项目耗时统计
+                $time = Utils::getDiffTime($orderRow->add_time, $orderRow->achieve_time);
+                $data['useTime'] = $this->formatLeftTime($time);
+                return $data;
+            }
+        }
     }
 
 }

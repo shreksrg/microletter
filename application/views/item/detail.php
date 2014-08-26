@@ -18,8 +18,10 @@
 <body>
 <div class="page show">
     <?php
+    $itemId = 0;
     if ($item->row) {
         $itemRow = (array)$item->row;
+        $itemId = $itemRow['id'];
         $goodsRow = $item->goods->row;
         $goodsRow = $goodsRow ? (array)$goodsRow : null;
         ?>
@@ -31,7 +33,7 @@
 
             <div>总价：<span class="price"><?= sprintf('%.2f', $goodsRow['gross']) ?></span> 元</div>
             <div>筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
-            <a href="submit.html"></a>
+            <a id="itemId" href="<?= SITE_URL ?>/order/apply"></a>
         </div>
         <div class="itemdetail_title">商品详情<span>Product Details</span></div>
         <div class="itemdetail_pic">
@@ -40,5 +42,10 @@
     <?php } ?>
 </div>
 </body>
-
+<script>
+    $('#itemId').click(function () {
+        document.cookie = "itemId=<?=$itemId?>" + ";path=/";
+        return true;
+    })
+</script>
 </html>

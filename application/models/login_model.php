@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 
 class Login_model extends CI_Model
 {

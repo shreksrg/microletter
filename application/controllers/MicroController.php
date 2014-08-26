@@ -1,5 +1,5 @@
 <?php
-defined('SITE_URL') or define('SITE_URL', '.');
+
 
 class MicroController extends CI_Controller
 {
@@ -8,6 +8,7 @@ class MicroController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        micro::openSession();
         $this->_init();
     }
 

@@ -1,8 +1,15 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
 
 class Login extends MicroController
 {
+    public function index()
+    {
+        $request = $this->input->server('REQUEST_METHOD');
+        $reUrl = $this->input->get('reUrl');
+        $request === 'GET' ? CView::show('login/index', array('reUrl' => $reUrl)) : $this->userLogin();
+    }
+
     /**
      * 用户登录
      */
@@ -36,9 +43,5 @@ class Login extends MicroController
         echo json_encode($responseArg);
     }
 
-    public function index()
-    {
-        $request = $this->input->server('REQUEST_METHOD');
-        $request === 'GET' ? CView::show('login/index') : $this->userLogin();
-    }
+
 }

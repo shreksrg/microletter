@@ -19,9 +19,9 @@ class Micro extends MicroBase
         // self::initSession();
     }
 
-    public static function initSession()
+    public static function openSession()
     {
-        //return new CSession;
+        @session_start();
     }
 
 

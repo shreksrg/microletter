@@ -42,7 +42,7 @@ class PlanItem extends CCApplication
 
     public function getGoodsRecs()
     {
-        $this->_goodsRecs;
+        return $this->_goodsRecs;
     }
 
     public function setRow($row)
@@ -71,7 +71,7 @@ class PlanItem extends CCApplication
     public function getGross()
     {
         $gross = 0;
-        if ($this->_recordSet && $this->_recordSet->num_rows > 0) {
+        if ($this->_recordSet && $this->_recordSet->row()) {
             $this->_recordSet->row()->gross;
         }
         return $gross;
