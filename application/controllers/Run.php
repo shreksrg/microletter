@@ -15,9 +15,16 @@ class Run extends MicroController
 
         $retval = $this->DateDiff('d', 1409050905, 1409335310);
         $unit = array('y', 'm', 'w', 'd', 'h', 'n', 's');
-        $log = array();
+        $lang = array('y' => '年', 'm' => '月', 'w' => '周', 'd' => '天', 'h' => '小时', 'n' => '分', 's' => '秒');
         foreach ($unit as $abbr) {
             $log[$abbr] = $this->DateDiff($abbr, 1409050905, 1409335310);
+        }
+
+        foreach ($log as $key => $value) {
+            if ($value > 0) {
+                echo $value . $lang[$key] . '前';
+                break;
+            }
         }
     }
 
