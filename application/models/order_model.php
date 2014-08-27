@@ -350,14 +350,6 @@ class Order_model extends CI_Model
             $orderId = $orderObj->row->id;
             $itemId = $orderObj->row->item_id;
             $diffTime = $orderObj->row->expire - time();
-
-            // 订单进行中
-            if ($diffTime > 0 && $lacks > 0) {
-                $state = 'on';
-            } elseif ($diffTime > 0 && $lacks <= 0) { //订单完成（成功）
-
-            }elseif($diffTime > 0 && $lacks <= 0)
-
             $quota = 0;
             $supports = $this->getSupports($orderId); //订单的支付人数
 
@@ -367,8 +359,15 @@ class Order_model extends CI_Model
             }
             if ($itemObj->row) $quota = $itemObj->row->quota;
             $lacks = $quota - $supports;
-            if ($lacks > 0) $state = 'on';
-            return true;
+
+            // 订单进行中
+            if ($diffTime > 0 && $lacks > 0) {
+                $state = 'on';
+            } elseif ($diffTime <= 0 && $lacks > 0) { //订单结束（失败）
+                $state = 'fail';
+            } elseif ($lacks <= 0) { //订单完成（成功）
+                $state = 'achieve';
+            }
         }
         return $state;
     }
