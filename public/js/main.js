@@ -28,9 +28,9 @@ $(function () {
     });
 
 
-    $(".agree").click(function () {
-        location.href = "agree.html";
-    });
+    /* $(".agree").click(function () {
+     location.href = "agree.html";
+     });*/
     $(".disagree").click(function () {
         location.href = "disagree.html";
     });

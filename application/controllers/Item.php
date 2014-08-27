@@ -55,13 +55,32 @@ class Item extends MicroController
     }
 
     /**
-     * 响应返回项目订购页
+     * 响应返回项目订单订购页
      */
-    public function itemOrder()
+    public function Order()
     {
+        $data = array();
         $orderId = (int)$this->input->get('id');
         $modOrder = CModel::make('order_model');
-        $info = $modOrder->getOrderInfo($orderId);
-        CView::show('item/order', array('info' => $info));
+        $data['info'] = $info = $modOrder->getOrderInfo($orderId);
+
+        if ($info) {
+            $orderObj = $info['order'];
+            $orderRow = $orderObj->row;
+            $orderStatus = $orderRow->status;
+            $diffTime = $orderRow->expire - time();
+
+            if ($orderStatus <= 0) {
+                $data['state'] = 'close';
+                echo '项目已关闭';
+                return false;
+            }
+            $data['state'] = 'end';
+            if ($orderStatus == 1 && $diffTime > 0) $data['state'] = 'on';
+            $data['consignee'] = $modOrder->getShipInfo($orderId); //收件人信息
+            CView::show('item/order', $data);
+        } else {
+            header('location:' . SITE_URL . '/item');
+        }
     }
 }

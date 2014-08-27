@@ -14,13 +14,21 @@ class Comment_model extends CI_Model
         if ($payId > 0) {
             $this->db->select('id');
             $query = $this->db->get_where('mic_payment_item', array('isdel' => 0, 'id' => $payId, 'order_id' => $orderId), 0, 1);
-            if ($query->num_rows < 0) {
-                $this->_errCode = 1000; // 不存在订单支付项
+            if (!$query->row()) {
+                $this->_errCode = 1001; // 不存在订单支付项
                 return $newId;
+            } else {
+                //验证是否已经评论
+                $sql = "select count(*) as num from mic_comment where isdel=0 and order_id=? and pay_id=?";
+                $query = $this->db->query($sql, array($orderId, $payId));
+                $num = (int)$query->row()->num;
+                if ($num > 0) {
+                    $this->_errCode = 1002; // 该支持（支付项）已经评论
+                    return $newId;
+                }
             }
         }
 
-        $this->db->select('id');
         $data = array(
             'order_id' => $orderId,
             'pay_id' => $payId,
@@ -31,7 +39,7 @@ class Comment_model extends CI_Model
         );
         $this->db->insert('mic_comment', $data);
         $newId = $this->db->insert_id();
-        if ($newId < 0) $this->_errCode = 1001; //插入失败
+        if ($newId <= 0) $this->_errCode = 1000; //插入失败
         return $newId;
     }
 
@@ -44,5 +52,10 @@ class Comment_model extends CI_Model
         if ($query->row())
             $comments = $query->result_array();
         return $comments;
+    }
+
+    public function getConsignee()
+    {
+
     }
 }

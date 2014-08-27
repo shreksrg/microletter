@@ -55,6 +55,10 @@ $(function(){
 		$(this).removeClass("show");
 	});
 
+	$(".sending").click(function(){ 
+		alert("支持成功！立即开始我的人品测试");
+		location.href = "index.html";
+	});
 	
 });
 

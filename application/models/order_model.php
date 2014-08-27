@@ -213,8 +213,8 @@ class Order_model extends CI_Model
 
             //订单评论
             // $order['comments'] = $this->getComments($orderId);
-            return $order;
         }
+        return $order;
     }
 
     /**

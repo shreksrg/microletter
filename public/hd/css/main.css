@@ -58,9 +58,11 @@ a{ text-decoration:none}
 header{width:90%;margin:0 auto;text-align:center}
 header h4{text-align:left;color:#666;margin:15px 0;}
 header h3{margin:0 0 20px;}
-.time, .information, .conts{width:70%;overflow:hidden;margin:0 auto 30px 8%;line-height:20px;padding-left:60px;}
+.time, .information, .conts,test_status{width:70%;overflow:hidden;margin:0 auto 30px 8%;line-height:20px;padding-left:60px;min-height:32px;}
 .time{background:url(../img/icon_clock.png) no-repeat 0 5%;background-size:31px 32px;}
 .information{background:url(../img/icon_person.png) no-repeat 0 5%;background-size:37px 34px;}
+.status_win{width:90%;height:106px;background:url(../img/win.png) no-repeat center 0;background-size:150px 106px;margin:0 auto}
+.status_lose{width:90%;height:106px;background:url(../img/lose.png) no-repeat center 0;background-size:150px 106px;margin:0 auto}
 .conts{background:url(../img/icon_star.png) no-repeat 0 5%;background-size:37px 34px;}
 .time span, .information span{font-size:16px;color:#ff4702}
 .information span.tip{line-height:50px;color:#c6c45f;font-size:11px;clear:both;display:block}

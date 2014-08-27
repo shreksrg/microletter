@@ -7,6 +7,7 @@ class Comment extends MicroController
 {
 
     protected $_modelComment;
+    protected $_salt = '_hlCharacter';
 
     public function __construct()
     {
@@ -14,27 +15,38 @@ class Comment extends MicroController
         $this->_modelComment = CModel::make('comment_model');
     }
 
-    public function commentOrder()
+
+    /**
+     * 评论留言
+     */
+    public function message()
     {
-        $request = $this->server('REQUEST_METHOD');
+        $request = $this->input->server('REQUEST_METHOD');
         if ($request == 'GET') {
-            $data['orderId'] = (int)$this->input->get('orderId'); //订单id
-            $data['payId'] = (int)$this->input->get('payId'); //订单支付项Id
-            $data['token'] = (int)$this->input->get('token'); //用户令牌
-            $view = $data['payId'] > 0 ? 'comment/support' : 'comment/nonsupport';
+            $data['orderId'] = $this->input->get('orderId'); //订单id
+            $data['payId'] = $this->input->get('payId'); //订单支付项Id
+            $data['token'] = sha1($this->_salt . $data['orderId'] . $data['payId']); //用户令牌
+
+            //获取发起人姓名：即订单收件人姓名
+            $modelOrder = CModel::make('order_model');
+            $shipInfo = $modelOrder->getShipInfo($data['orderId']);
+            $data['consignee'] = isset($shipInfo['fullname']) ? $shipInfo['fullname'] : '';
+
+            $view = $data['payId'] > 0 ? 'comment/form_support' : 'comment/form_refuse';
             CView::show($view, $data);
         } else {
             $form = array(); //表单数据
             $orderId = (int)$this->post('orderId');
             $payId = (int)$this->post('payId');
+            $token = $this->post('token');
 
-            if ($form['token'] !== $_SESSION['_comment_token']) {
-                header('location:' . SITE_URL . '/item');
-                exit;
+            //验证token
+            $_token = sha1($this->_salt . $orderId . $payId);
+            if ($_token !== $token) {
+                CAjax::show(1000, '验证失败');
             }
             $this->_modelComment->newComment($form); //新增留言
-            unset($_SESSION['_comment_token']);
-            header('location:' . SITE_URL . '/comment/show?id=' . $orderId);
+            CAjax::show(0, 'successful');
         }
     }
 
@@ -58,4 +70,6 @@ class Comment extends MicroController
             CView::show('comment/show', $data);
         }
     }
+
+
 }
