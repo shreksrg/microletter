@@ -4,6 +4,11 @@ class Comment_model extends CI_Model
 {
     protected $_errCode = array();
 
+    public function getErrCode()
+    {
+        return $this->_errCode;
+    }
+
     public function newComment($data)
     {
         $newId = 0;
@@ -29,33 +34,34 @@ class Comment_model extends CI_Model
             }
         }
 
-        $data = array(
+        $values = array(
             'order_id' => $orderId,
             'pay_id' => $payId,
-            'fullname' => $data['fullName'],
+            'fullname' => isset($data['fullName']) ? $data['fullName'] : '',
             'type' => $payId > 0 ? 1 : 0,
             'comment' => $data['content'],
             'add_time' => time()
         );
-        $this->db->insert('mic_comment', $data);
+        $this->db->insert('mic_comment', $values);
         $newId = $this->db->insert_id();
         if ($newId <= 0) $this->_errCode = 1000; //插入失败
         return $newId;
     }
 
 
-    public function getCommentsByOrderId($orderId, $type)
+    public function getComments($args)
     {
+        $page = (int)$args['page'];
+        $offset = isset($args['offset']) ? (int)$args['offset'] : 10;
+        if ($page <= 1) $page = 1;
+        $page--;
         $comments = array();
-        $sql = "select * from mic_comment where isdel=0 and order_id=? and type=?";
-        $query = $this->db->query($sql, array($orderId, $type));
+        $sql = "select * from mic_comment where isdel=0 and order_id=? and type=? order by add_time desc limit ?,?";
+        $query = $this->db->query($sql, array($args['orderId'], $args['type'], $page, $offset));
         if ($query->row())
             $comments = $query->result_array();
         return $comments;
     }
 
-    public function getConsignee()
-    {
 
-    }
 }

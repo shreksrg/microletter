@@ -47,5 +47,6 @@
         document.cookie = "itemId=<?=$itemId?>" + ";path=/";
         return true;
     })
+
 </script>
 </html>

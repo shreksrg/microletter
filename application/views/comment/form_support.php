@@ -32,7 +32,7 @@
     </form>
     <button id="btnSendMsg" type="button" class="sending btn">发送留言</button>
     <div class="line_box">
-        <a class="gohome" href="index.html">发起的人品大挑战</a>
+        <a class="gohome" href="<?=SITE_URL?>/item">发起的人品大挑战</a>
     </div>
 </div>
 </body>
@@ -40,7 +40,13 @@
     $('#btnSendMsg').click(function () {
         var frm = $('form');
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {
-
+            if (rep.code == 0) {
+                alert("支持成功！立即开始我的人品测试");
+                location.href = "<?=SITE_URL?>/item";
+            } else {
+                var errCode = rep.code;
+                alert(rep.message)
+            }
         }, 'json')
         return false;
     })

@@ -35,18 +35,34 @@ class Comment extends MicroController
             $view = $data['payId'] > 0 ? 'comment/form_support' : 'comment/form_refuse';
             CView::show($view, $data);
         } else {
-            $form = array(); //表单数据
-            $orderId = (int)$this->post('orderId');
-            $payId = (int)$this->post('payId');
-            $token = $this->post('token');
+            $form = $this->input->post(); //表单数据
+            $orderId = (int)$this->input->post('orderId');
+            $payId = (int)$this->input->post('payId');
+            $token = $this->input->post('token');
 
             //验证token
             $_token = sha1($this->_salt . $orderId . $payId);
             if ($_token !== $token) {
-                CAjax::show(1000, '验证失败');
+                CAjax::show(-1, '验证失败');
             }
-            $this->_modelComment->newComment($form); //新增留言
-            CAjax::show(0, 'successful');
+            $newId = $this->_modelComment->newComment($form); //新增留言
+            $code = 0;
+            $message = 'successful';
+            if ($newId == 0) {
+                $code = $this->_modelComment->getErrCode();
+                switch ($code) {
+                    case 1001:
+                        $message = '你评论的挑战不存在';
+                        break;
+                    case 1002:
+                        $message = '您已经评论过';
+                        break;
+                    case 1000:
+                        $message = '系统繁忙,请稍候再试';
+                        break;
+                }
+            }
+            CAjax::show($code, $message);
         }
     }
 
@@ -55,21 +71,63 @@ class Comment extends MicroController
      */
     public function show()
     {
-        $data = array();
-        $orderId = (int)$this->input->get('id');
-        $modOrder = CModel::make('order_model');
+        //验证用户登录
+        if ($this->_user->isGuest) {
+            header('location:' . SITE_URL . '/login?reUrl=comment/show');
+            exit;
+        }
 
+        $data = array();
+        $orderId = (int)$this->input->get('orderId');
+        $type = (int)$this->input->get('type'); //类型，0=放弃；1=支持
+        $modOrder = CModel::make('order_model');
         $order = $modOrder->genOrder($orderId);
         if ($order->row) {
+            if ($this->_user->id != $order->row->user_id) {
+                header('location:' . SITE_URL . '/item');
+                exit;
+            }
+
             $modItem = CModel::make('planItem_model');
             $planItem = $modItem->genItem($order->row->item_id);
             $data['quota'] = $planItem->row->quota; //限定支付总人数
             $data['supports'] = $modOrder->getSupports($orderId); //支付人数
-            // $data['leftTime'] = $modOrder->formatLeftTime($order->getLeftTime()); //剩余时间
-            $data['comments'] = $this->_modelComment->getCommentsByOrderId($orderId); // 订单评论列表
+            $args = array('orderId' => $orderId, 'type' => $type, 'page' => 1, 'offset' => 10);
+            $data['comments'] = $this->_modelComment->getComments($args); // 订单评论列表
             CView::show('comment/show', $data);
         }
     }
 
+
+    /**
+     * ajax输出列表
+     */
+    public function  getList()
+    {
+
+        //验证用户登录
+        if ($this->_user->isGuest)
+            CAjax::show(1000, '登录超时');
+
+        $data = array();
+        $orderId = (int)$this->input->get('orderId');
+        $type = (int)$this->input->get('type'); //类型，0=放弃；1=支持
+        $page = (int)$this->input->get('page'); //页数
+
+        $modOrder = CModel::make('order_model');
+        $order = $modOrder->genOrder($orderId);
+        if ($order->row) {
+            if ($this->_user->id != $order->row->user_id) {
+                CAjax::show(1002, '用户项目不匹配');
+                exit;
+            }
+            $args = array('orderId' => $orderId, 'type' => $type, 'page' => $page, 'offset' => 10);
+            $data['comments'] = $this->_modelComment->getComments($args); // 订单评论列表
+            CAjax::show(0, 'successful', $data);
+
+        } else {
+            CAjax::show(1001, '项目不存在');
+        }
+    }
 
 }

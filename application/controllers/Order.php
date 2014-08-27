@@ -32,7 +32,7 @@ class Order extends MicroController
         $request = $this->input->server('REQUEST_METHOD');
         if ($request == 'POST') {
             $form = array();
-            $form['itemId'] = $this->input->post('itemId', true); //商品id
+            $form['itemId'] = $this->input->post('itemId', true); //项目id
             $form['message'] = $this->input->post('message', true);
             $form['address'] = $this->input->post('address', true);
             $form['mobile'] = $this->input->post('mobile', true);
@@ -60,6 +60,12 @@ class Order extends MicroController
         } else {
             $itemId = (int)$this->input->cookie("itemId");
             if ($itemId > 0) {
+                //验证项目是否已经被下单
+                $return = $this->_modelOrder->hasItemExists($this->_user->id, $itemId);
+                if ($return == true) {
+                    echo '您已经发了挑战，挑战未结束前不能再发起.</br> <a href="' . SITE_URL . '/order/status">查看我的挑战</a>';
+                    return false;
+                }
                 CView::show('order/form', array('itemId' => $itemId));
             }
         }
@@ -84,16 +90,9 @@ class Order extends MicroController
     {
         $data = $this->_modelOrder->getStatus($this->_user);
         $state = $data['state'];
-        CView::show('order/status_' . $state, $data);
-    }
+        if ($state == 'none') {
+            echo '您尚未发起挑战,<a href="' . SITE_URL . '/item">去发起挑战</a>';
+        } else CView::show('order/status_' . $state, $data);
 
-    /**
-     * 支付订单项目详情页
-     */
-    public function paymentItem()
-    {
-        $id = (int)$this->input->get('id', true);
-        $data = $this->_modelOrder->getOrderInfo($id);
-        CView::show('order/payment_item', $data);
     }
 }

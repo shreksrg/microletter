@@ -55,16 +55,16 @@
         </div>
         <div class="conts">如果觉得Ta人品还行，可以点击下方按钮支持他。<br/>到达截止时间还未筹集成功，所有款项将被退还。</div>
         <div class="line_box">
-            <button type="button" class="disagree btn">支持个毛~</button>
+            <button type="button" id="btnRefuse" class="disagree btn">支持个毛~</button>
             <button type="button" id="btnSupport" class="agree btn">人品还行支持他</button>
             <input type="hidden" name="orderId" value="<?= $orderId ?>"/>
         </div>
         <script>
+            var siteUrl = '<?=SITE_URL?>';
+            var orderId = $('input[name=orderId]').val();
             //支付订单
             $('#btnSupport').click(function () {
-                var siteUrl = '<?=SITE_URL?>';
                 var url = siteUrl + '/payment';
-                var orderId = $('input[name=orderId]').val();
                 $.get(url, {'orderId': orderId}, function (rep) {
                     if (rep.code == 0) {
                         var href = siteUrl + '/comment/message?orderId=' + orderId + '&payId=' + rep.data.payId;
@@ -75,13 +75,20 @@
                 }, 'json');
                 return false;
             })
+
+            //拒绝订单
+            $('#btnRefuse').click(function () {
+                var url = siteUrl + '/comment/message?orderId=' + orderId + '&payId=0';
+                location.href = url;
+                return false;
+            })
         </script>
     <?php
     } else {
         echo '该挑战已经结束';
     } ?>
     <div class="line_box">
-        <a class="gohome" href="index.html">发起的人品大挑战</a>
+        <a class="gohome" href="<?= SITE_URL ?>/item">发起的人品大挑战</a>
     </div>
 </div>
 </body>

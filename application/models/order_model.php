@@ -18,7 +18,6 @@ class Order_model extends CI_Model
         $query = $this->db->query($sql, array($mobile, $code));
         if ($query->row()) {
             $id = $query->row()->id;
-            //$this->db->query("update mic_mobile_captcha set status=1 where id=$id");
             return true;
         }
         return false;
@@ -69,7 +68,7 @@ class Order_model extends CI_Model
     {
         $sn = $this->genOrderSn();
         $time = time();
-        $expire = $time + $itemObj->row->peroid * 3600;
+        $expire = $time + $itemObj->row->period * 3600;
         $values = array(
             'user_id' => $userId,
             'sn' => $sn,
@@ -217,52 +216,6 @@ class Order_model extends CI_Model
         return $order;
     }
 
-    /**
-     * 交易中的订单详情
-     */
-    public function getDetailOfUnderway()
-    {
-        $detail = array();
-        $orderId = $this->input->get('orderId');
-        $sql = "select * from mic_order where isdel=0 and status=1 and id=$orderId limit 1";
-        $query = $this->db->query($sql);
-        if ($query->num_rows > 0) {
-            $orderRow = $query->row();
-            $detail['message'] = $orderRow->message; //订单留言
-            $detail['addTime'] = $orderRow->add_time; //下单时间(发起时间)
-
-            $itemId = $orderRow->item_id;
-            $modItem = CModel::make('planItem_model');
-            $planItem = $modItem->genItem($itemId);
-
-            $detail['item'] = $planItem; //订单项目
-
-            //订单项目商品信息
-            $detail['goods'] = $planItem->getGoodsRecs($itemId)->row_array();
-
-            //订单支付统计信息
-            $quota = $planItem->row->quota;
-            $sql = "select count(*) as num from  mic_payment_item where isdel=0 and status=1 and order_id=$orderId";
-            $query = $this->db->query($sql);
-            $num = $query->row()->num;
-            $detail['quota'] = $quota; //支付者人数配额
-            $detail['pays'] = $num; //已经支付人数
-
-            //剩余时间，精确到分钟
-            $diffSec = $orderRow->expire - time();
-            $diffDays = ($diffSec / 3600 / 24);
-            $detail['leftDays'] = intval($diffDays); //剩余天数
-            $diffHours = ($diffDays - $detail['leftDays']) * 24;
-            $detail['leftHours'] = intval($diffHours); //剩余小时数
-            $detail['leftMinutes'] = ($diffHours - $detail['leftHours']) * 60; //剩余分钟
-
-            //订单评论
-            $detail['comments'] = $this->getComments($orderId);
-
-
-            // CView::show('order/detail');
-        }
-    }
 
     /**
      * 获取订单评论
@@ -275,39 +228,6 @@ class Order_model extends CI_Model
         if ($query->num_rows)
             $comments = $query->result_array();
         return $comments;
-    }
-
-    /**
-     * 订单详情，结束时
-     */
-    public function getDetailOfFinish()
-    {
-        $detail = array();
-        $sql = "select * from mic_order where isdel=0 and status in (2,3) order by add_time limit 1";
-        $query = $this->db->query($sql);
-
-        if ($query->num_rows > 0) {
-            $orderRow = $query->row();
-            $orderId = $orderRow->id;
-            $status = $orderRow->status;
-
-            //订单项目
-            $itemId = $orderRow->item_id;
-            $modItem = CModel::make('planItem_model');
-            $detail['item'] = $planItem = $modItem->genItem($itemId);
-
-            //订单项目商品信息
-            $detail['goods'] = $planItem->getGoodsRecs($itemId)->row_array();
-
-            if ($status == 2) { //订单支付完成
-                //项目耗时统计
-                $detail['useTime'] = $this->useTimeLabel($orderRow->add_time, $orderRow->achieve_time);
-                CView::show('order/detail2', $detail);
-            } elseif ($status == 3) { //订单支付未完成
-                $detail['supports'] = $this->getSupports($orderId); //支持者人数
-                CView::show('order/detail3', $detail);
-            }
-        } else header('location:' . SITE_URL . '/item');
     }
 
 
@@ -362,43 +282,94 @@ class Order_model extends CI_Model
      */
     public function getStatus($user)
     {
+        $data = array('state' => 'none');
         $uid = $user->id;
         $sql = "select * from mic_order where isdel=0 and user_id=? order by add_time desc limit 1";
         $query = $this->db->query($sql, array($uid));
         $orderRow = $query->row();
         if ($orderRow) {
             $orderId = $orderRow->id;
-            $order = new ItemOrder($orderId, $query);
-            $diffTime = $orderRow->expire - time();
-            //正在进行中的订单
-            if ($orderRow->status == 1 && $diffTime > 0) {
+            //订单关闭
+            if ($orderRow->status == 0) {
+                $data['state'] = 'close';
+                return $data;
+            }
+
+            $diffTime = $orderRow->expire - time(); //距离时间
+            $data['info'] = $info = $this->getOrderInfo($orderId); //订单详情
+            $lacks = $info['quota'] - $info['supportNum']; //缺少人数
+
+            if ($lacks > 0 && $diffTime > 0) { //正在进行中的订单
                 $data['state'] = 'on';
-                $data['info'] = $this->getOrderInfo($orderId); //订单详情
                 $sql = "select count(*) as num from mic_comment where isdel=0 and pay_id=0 and type=0 and order_id=$orderId";
                 $query = $this->db->query($sql);
                 $data['info']['abandon'] = (int)$query->row()->num; //放弃人数
                 $data['info']['consignee'] = $this->getShipInfo($orderId);
-                return $data;
-            }
-
-            //结束订单：已完成筹资
-            if ($orderRow->status == 2 && $diffTime <= 0) {
+            } elseif ($lacks <= 0 && $diffTime <= 0) { //结束订单：已完成筹资(成功)
                 $data['state'] = 'achieve';
-                $data['info'] = $this->getOrderInfo($orderId); //订单详情
-                //项目耗时统计
-                $time = Utils::getDiffTime($orderRow->add_time, $orderRow->achieve_time);
+                $time = Utils::getDiffTime($orderRow->add_time, $orderRow->achieve_time); //项目耗时统计
                 $data['useTime'] = $this->formatLeftTime($time);
-                return $data;
-            }
-
-            //结束订单：未完成筹资
-            if ($orderRow->status == 3 && $diffTime <= 0) {
+            } elseif ($lacks > 0 && $diffTime <= 0) { //结束订单：未完成筹资(失败)
                 $data['state'] = 'fail';
-                $data['info'] = $this->getOrderInfo($orderId); //订单详情
-                return $data;
             }
-
         }
+        return $data;
     }
 
+    /**
+     * 项目是否存在正在进行的订单中
+     */
+    public function hasItemExists($userId, $itemId)
+    {
+        $userId = (int)$userId;
+        $time = time();
+        $sql = "select * from mic_order where  isdel=0 and status>0 and expire>$time and user_id=$userId order by add_time desc limit 1";
+        $query = $this->db->query($sql);
+        if ($query->row()) {
+            $orderId = $query->row()->id;
+            $itemId = $query->row()->item_id;
+            $quota = 0;
+            $supports = $this->getSupports($orderId); //订单的支付人数
+            $modItem = CModel::make('planItem_model');
+            $itemObj = $modItem->genItem($itemId); //订单项目
+            if ($itemObj->row) $quota = $itemObj->row->quota;
+            $lacks = $quota - $supports;
+            if ($lacks > 0)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取订单时效状态
+     */
+    public function getOrderState($orderObj, $itemObj = null)
+    {
+        $state = 'none';
+        if ($orderObj->row) {
+            $orderId = $orderObj->row->id;
+            $itemId = $orderObj->row->item_id;
+            $diffTime = $orderObj->row->expire - time();
+
+            // 订单进行中
+            if ($diffTime > 0 && $lacks > 0) {
+                $state = 'on';
+            } elseif ($diffTime > 0 && $lacks <= 0) { //订单完成（成功）
+
+            }elseif($diffTime > 0 && $lacks <= 0)
+
+            $quota = 0;
+            $supports = $this->getSupports($orderId); //订单的支付人数
+
+            if ($itemObj === null) {
+                $modItem = CModel::make('planItem_model');
+                $itemObj = $modItem->genItem($itemId); //订单项目
+            }
+            if ($itemObj->row) $quota = $itemObj->row->quota;
+            $lacks = $quota - $supports;
+            if ($lacks > 0) $state = 'on';
+            return true;
+        }
+        return $state;
+    }
 }

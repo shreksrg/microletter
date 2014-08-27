@@ -30,43 +30,13 @@
                 ?>
                 <ul>
                     <h2><?= $comment['fullname'] ?>：<span><?= $dateLabel ?></span></h2>
-                    <li><?= $comment['content'] ?></li>
+                    <li><?= $comment['comment'] ?></li>
                 </ul>
             <?php
             }
+        } else {
+            echo '尚无评论';
         } ?>
-        <ul>
-            <h2>Lisa：<span>3小时前</span></h2>
-            <li>顶哥们！</li>
-        </ul>
-        <ul>
-            <h2>Jacky：<span>4小时前</span></h2>
-            <li>老婆，我爱你！</li>
-        </ul>
-        <ul>
-            <h2>Linda：<span>2小时前</span></h2>
-            <li>够意思吧，我一看到，就为你支付了噢，希望你不要让我失望，人气哥哥！</li>
-        </ul>
-        <ul>
-            <h2>Lisa：<span>3小时前</span></h2>
-            <li>顶哥们！</li>
-        </ul>
-        <ul>
-            <h2>Jacky：<span>4小时前</span></h2>
-            <li>老婆，我爱你！</li>
-        </ul>
-        <ul>
-            <h2>Linda：<span>2小时前</span></h2>
-            <li>够意思吧，我一看到，就为你支付了噢，希望你不要让我失望，人气哥哥！</li>
-        </ul>
-        <ul>
-            <h2>Lisa：<span>3小时前</span></h2>
-            <li>顶哥们！</li>
-        </ul>
-        <ul>
-            <h2>Jacky：<span>4小时前</span></h2>
-            <li>老婆，我爱你！</li>
-        </ul>
     </div>
 </div>
 </body>

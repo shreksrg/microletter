@@ -23,34 +23,34 @@ $(function () {
      checkSubmitAll();
      });*/
 
-    $(".share").click(function () {
-        location.href = "support.html";
-    });
+    /*$(".share").click(function () {
+     location.href = "support.html";
+     });*/
 
 
     /* $(".agree").click(function () {
      location.href = "agree.html";
      });*/
-    $(".disagree").click(function () {
+    /*$(".disagree").click(function () {
         location.href = "disagree.html";
-    });
+    });*/
 
     /*	$(".loginbtn").click(function(){
      location.href = "status.html";
      });*/
 
-    $(".retry").click(function () {
+   /* $(".retry").click(function () {
         location.href = "index.html";
-    });
+    });*/
 
-    $(".goodguy").click(function () {
+   /* $(".goodguy").click(function () {
         location.href = "goodguy.html";
     });
 
     $(".badguy").click(function () {
         location.href = "badguy.html";
     });
-
+*/
     $(".sharetipmask").click(function () {
         $(this).removeClass("show");
     });

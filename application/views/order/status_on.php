@@ -18,13 +18,13 @@
 
 
 <body>
-<a style="display:block;width:30px;height:90px;position:absolute;left:0;top:0;" href="fail.html"></a>
-<a style="display:block;width:30px;height:90px;position:absolute;right:0;top:0" href="success.html"></a>
+
 
 <div class="page show">
     <?php
     $order = $info['order'];
     $orderRow = (array)$order->row;
+    $orderId = $orderRow['id'];
 
     $consignee = $info['consignee'];
 
@@ -59,11 +59,27 @@
         位朋友给予了我支持，距离成功达成目标还差<span> <?= $lacks ?> </span>人！<br/>筹集截止时间：<span><?= $leftTime ?></span>
     </div>
     <div class="line_box">
-        <button type="button" class="badguy btn">贬我的人(<?= $info['abandon'] ?>人)</button>
-        <button type="button" class="goodguy btn">支持我的人(<?= $supports ?>人)</button>
+        <button id="bvRefuse" type="button" class="badguy btn">贬我的人(<?= $info['abandon'] ?>人)</button>
+        <button id="bvSupport" type="button" class="goodguy btn">支持我的人(<?= $supports ?>人)</button>
     </div>
 
 </div>
 </body>
+<script>
+    $('#bvRefuse').click(function () {
+        var num = parseInt(<?=$lacks?>);
+        if (num > 0)
+            location.href = "<?=SITE_URL?>/comment/show?type=0&orderId=<?=$orderId?>";
+    })
+
+    $('#bvSupport').click(function () {
+        var num = parseInt(<?=$supports?>);
+        if (num > 0)
+            location.href = "<?=SITE_URL?>/comment/show?type=1&orderId=<?=$orderId?>";
+        return false;
+    })
+
+
+</script>
 
 </html>

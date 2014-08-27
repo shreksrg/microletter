@@ -21,7 +21,7 @@
     <?php
     //$defUrl = SITE_URL . '/order/apply';
     $defUrl = SITE_URL . '/order/status';
-    $redirect = isset($reUrl) ? $reUrl : $defUrl;
+    $redirect = isset($reUrl) && strlen($reUrl) > 0 ? SITE_URL . '/' . $reUrl : $defUrl;
     ?>
     <div class="loginbox">
         <form action="<?= SITE_URL ?>/login">

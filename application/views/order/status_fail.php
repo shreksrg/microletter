@@ -22,7 +22,8 @@
     <?php
 
     $order = $info['order'];
-    $orderId = $order->row->id;
+    $orderRow = (array)$order->row;
+    $orderId = $orderRow['id'];
 
     $item = $info['item'];
     $itemRow = (array)$item->row;
@@ -31,28 +32,26 @@
 
     $supports = $info['supportNum'];
     $lacks = $info['quota'] - $supports;
+    $leftTime = $info['leftTime']
 
     ?>
-    <div class="successtitle">
-        我的人品还不错<br/><span><?= $useTime ?></span>就达成了<span><?= $itemRow['grade_name'] ?></span>的目标！ <br/>你敢试试吗！？
+    <div class="failtitle">
+        我的人品稀烂！<br/>只有<?= $supports ?>位朋友给予了我支持，距离成功达成 <br/><span><?= $itemRow['grade_name'] ?></span>目标还差
+        <span><?= $lacks ?></span> 人！
     </div>
 
-    <div class="tableview">
-        <section class="status1 fix">
-            <img class="pic" src="img/item1.jpg"/>
-
-            <h2>[<?= $goodsRow['origin'] ?>] <?= $goodsRow['title'] ?></h2>
-
-            <div>总价：<span class="price"><?= $goodsRow['price'] ?></span>元</div>
-            <div>元筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
-        </section>
-    </div>
-    <div class="delivertips">商品将于2个工作日内快递至您填写的地址</div>
-    <button type="button" class=" btn">分享到朋友圈测人品</button>
+    <button id="btnRetry" type="button" class="retry btn">不信邪~再测一次！</button>
     <div class="line_box">
-        <a class="gohome" href="<?= SITE_URL ?>/comment/show?type=1&orderId=<?= $orderId ?>">查看谁支持了我</a>
+        <a class="gohome" href="###">分享到朋友圈</a>
+        <a id="bvSupport" class="gohome" href="<?= SITE_URL ?>/comment/show?type=1&orderId=<?= $orderId ?>">查看谁支持了我</a>
     </div>
 </div>
 </body>
+<script>
+    $('#btnRetry').click(function () {
+        location.href = "<?=SITE_URL?>/item";
+        return false;
+    })
+</script>
 
 </html>

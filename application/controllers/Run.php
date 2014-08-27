@@ -6,10 +6,11 @@ class Run extends MicroController
 
     public function index()
     {
-        echo  strtotime('+3 days 2 hours 14 minutes');
+        //  echo  strtotime('+3 days 2 hours 14 minutes');
+        echo time();
         return false;
 
-       echo $id = $this->input->get('id');
+        echo $id = $this->input->get('id');
         d($id);
         return true;
         //$this->load->model('run_model');
