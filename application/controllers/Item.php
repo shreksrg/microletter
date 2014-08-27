@@ -66,9 +66,12 @@ class Item extends MicroController
 
         if ($info) {
             $orderObj = $info['order'];
+            $itemObj = $info['item'];
             $orderRow = $orderObj->row;
             $orderStatus = $orderRow->status;
             $diffTime = $orderRow->expire - time();
+
+            $state = $modOrder->getOrderState($orderObj, $itemObj);
 
             if ($orderStatus <= 0) {
                 $data['state'] = 'close';
