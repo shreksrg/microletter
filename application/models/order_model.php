@@ -305,12 +305,12 @@ class Order_model extends CI_Model
                 $query = $this->db->query($sql);
                 $data['info']['abandon'] = (int)$query->row()->num; //放弃人数
                 $data['info']['consignee'] = $this->getShipInfo($orderId);
-            } elseif ($lacks <= 0 && $diffTime <= 0) { //结束订单：已完成筹资(成功)
+            } elseif ($lacks > 0 && $diffTime <= 0) { //结束订单：未完成筹资(失败)
+                $data['state'] = 'fail';
+            } elseif ($lacks <= 0) {
                 $data['state'] = 'achieve';
                 $time = Utils::getDiffTime($orderRow->add_time, $orderRow->achieve_time); //项目耗时统计
                 $data['useTime'] = $this->formatLeftTime($time);
-            } elseif ($lacks > 0 && $diffTime <= 0) { //结束订单：未完成筹资(失败)
-                $data['state'] = 'fail';
             }
         }
         return $data;
