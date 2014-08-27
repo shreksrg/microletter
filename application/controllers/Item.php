@@ -71,15 +71,13 @@ class Item extends MicroController
             $orderStatus = $orderRow->status;
             $diffTime = $orderRow->expire - time();
 
-            $state = $modOrder->getOrderState($orderObj, $itemObj);
+            $data['state'] = $modOrder->getOrderState($orderObj, $itemObj);
 
             if ($orderStatus <= 0) {
                 $data['state'] = 'close';
                 echo '项目已关闭';
                 return false;
             }
-            $data['state'] = 'end';
-            if ($orderStatus == 1 && $diffTime > 0) $data['state'] = 'on';
             $data['consignee'] = $modOrder->getShipInfo($orderId); //收件人信息
             CView::show('item/order', $data);
         } else {
