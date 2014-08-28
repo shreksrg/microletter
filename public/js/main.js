@@ -1,12 +1,6 @@
 /*------------------------------------------------------------------------
  * Copyright (c) 2014 hailiang All rights reserved. by Jackal
  ------------------------------------------------------------------------*/
-var shareData = {
-    imgUrl: "http://jackal.sinaapp.com/ds/assets/img/share_ico.jpg",
-    timeLineLink: "gq.hailiang.cn/hd",
-    tTitle: "快，抓住那小三",
-    tContent: ""
-};
 
 $(function () {
 
@@ -32,25 +26,25 @@ $(function () {
      location.href = "agree.html";
      });*/
     /*$(".disagree").click(function () {
-        location.href = "disagree.html";
-    });*/
+     location.href = "disagree.html";
+     });*/
 
     /*	$(".loginbtn").click(function(){
      location.href = "status.html";
      });*/
 
-   /* $(".retry").click(function () {
-        location.href = "index.html";
-    });*/
+    /* $(".retry").click(function () {
+     location.href = "index.html";
+     });*/
 
-   /* $(".goodguy").click(function () {
-        location.href = "goodguy.html";
-    });
+    /* $(".goodguy").click(function () {
+     location.href = "goodguy.html";
+     });
 
-    $(".badguy").click(function () {
-        location.href = "badguy.html";
-    });
-*/
+     $(".badguy").click(function () {
+     location.href = "badguy.html";
+     });
+     */
     $(".sharetipmask").click(function () {
         $(this).removeClass("show");
     });
@@ -105,17 +99,65 @@ function checkSubmitAll() {
 
 }
 
-//分享到朋友圈
-//function weixinShareTimeline(){ 
-//alert("11");
-//    WeixinJSBridge.invoke('shareTimeline',{ 
-//        "img_url":"img/weixingimg.jpg", 
-//        //"img_width":"640", 
-//        //"img_height":"640", 
-//        "link":"http://gq.hailiang.cn/hd", 
-//        "desc": desc, 
-//        "title":"我发起了测人品，别让我的节操碎了一地"
-//    });  
-//}
+
+var _namespace_micro = {}
+_namespace_micro.winxinShare = function (shareData) {
+    function shareFriend() {
+        WeixinJSBridge.invoke('sendAppMessage', {
+            "img_url": shareData.imgUrl,
+            "img_width": "640",
+            "img_height": "640",
+            "link": shareData.link,
+            "title": shareData.title,
+            "desc": shareData.desc
+        }, function (res) {
+            _report('send_msg', res.err_msg);
+        })
+    }
+
+    function shareTimeline() {
+        WeixinJSBridge.invoke('shareTimeline', {
+            "img_url": shareData.imgUrl,
+            "img_width": "640",
+            "img_height": "640",
+            "link": shareData.link,
+            "title": shareData.title,
+            "desc": shareData.desc
+        }, function (res) {
+            _report('timeline', res.err_msg);
+        });
+    }
+
+    function shareWeibo() {
+        WeixinJSBridge.invoke('shareWeibo', {
+            "content": window.shareData.title,
+            "url": window.shareData.link
+        }, function (res) {
+            _report('weibo', res.err_msg);
+        });
+    }
+
+    // 当微信内置浏览器完成内部初始化后会触发WeixinJSBridgeReady事件。
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+
+        // 发送给好友
+        WeixinJSBridge.on('menu:share:appmessage', function (argv) {
+            shareFriend();
+        });
+
+        // 分享到朋友圈
+        WeixinJSBridge.on('menu:share:timeline', function (argv) {
+            shareTimeline();
+        });
+
+        // 分享到微博
+        WeixinJSBridge.on('menu:share:weibo', function (argv) {
+            shareWeibo();
+        });
+
+    }, false)
+}
+
+
 
 

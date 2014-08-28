@@ -35,7 +35,7 @@ class Login_model extends CI_Model
     {
         $sql = "SELECT * FROM mic_user WHERE username = ? AND password = ?";
         $query = $this->db->query($sql, array($username, md5($password)));
-        if ($query->num_rows() > 0) {
+        if ($query->row()) {
             $this->_uid = $query->row()->id;
             $this->_validateFlag = true;
         }

@@ -33,10 +33,13 @@
 
     $goodsRow = $info['goods'];
 
-    $abandon=$info['abandon'];
+    $abandon = $info['abandon'];
     $supports = $info['supportNum'];
     $lacks = $info['quota'] - $supports;
-    $leftTime = $info['leftTime']
+    $leftTime = $info['leftTime'];
+
+    //$goodsImg = SERVER_NAME . $goodsRow['img'];
+    $message = $orderRow['message'];
 
     ?>
     <header>
@@ -69,18 +72,29 @@
 <script>
     $('#bvRefuse').click(function () {
         var num = parseInt(<?=$abandon?>);
-       // if (num > 0)
-            location.href = "<?=SITE_URL?>/comment/show?type=0&orderId=<?=$orderId?>";
+        // if (num > 0)
+        location.href = "<?=SITE_URL?>/comment/show?type=0&orderId=<?=$orderId?>";
     })
 
     $('#bvSupport').click(function () {
         var num = parseInt(<?=$supports?>);
-       // if (num > 0)
-            location.href = "<?=SITE_URL?>/comment/show?type=1&orderId=<?=$orderId?>";
+        // if (num > 0)
+        location.href = "<?=SITE_URL?>/comment/show?type=1&orderId=<?=$orderId?>";
         return false;
     })
 
 
+</script>
+
+<script>
+    var shareData = {
+        'imgUrl': "http://<?=SERVER_NAME?>/public/img/wexingimg.jpg",
+        'link': "<?=SITE_URL?>/item/order?id=<?=$orderId?>",
+        'title': "<?=$message?>",
+        'desc': "我的人品挑战测试"
+    };
+
+    _namespace_micro.winxinShare(shareData);
 </script>
 
 </html>

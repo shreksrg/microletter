@@ -330,7 +330,7 @@ class Order_model extends CI_Model
     {
         $data = array('state' => 'none');
         $uid = $user->id;
-        $data['Originator'] = $user->info->fullname;
+        $data['Originator'] = $user->info->fullname; //发起人名
         $sql = "select * from mic_order where isdel=0 and user_id=? order by add_time desc limit 1";
         $query = $this->db->query($sql, array($uid));
         $orderRow = $query->row();
@@ -351,7 +351,7 @@ class Order_model extends CI_Model
                 $sql = "select count(*) as num from mic_comment where isdel=0 and pay_id=0 and type=0 and order_id=$orderId";
                 $query = $this->db->query($sql);
                 $data['info']['abandon'] = (int)$query->row()->num; //放弃人数
-               // $data['info']['consignee'] = $this->getShipInfo($orderId);
+                // $data['info']['consignee'] = $this->getShipInfo($orderId);
             } elseif ($lacks > 0 && $diffTime <= 0) { //结束订单：未完成筹资(失败)
                 $data['state'] = 'fail';
             } elseif ($lacks <= 0) {

@@ -14,15 +14,19 @@
     <script src="/public/js/jquery.min.js"></script>
     <script src="/public/js/main.js"></script>
 
+
 </head>
 
 
 <body>
 <div class="page show">
     <?php
+
+
     if ($info) {
         $orderObj = isset($info['order']) ? $info['order'] : null;
         $orderRow = (array)$orderObj->row;
+        $orderId = $orderRow['id'];
 
         $itemObj = $info['item'];
         $itemRow = (array)$itemObj->row;
@@ -33,6 +37,8 @@
         $lacks = $info['quota'] - $info['supportNum'];
 
         $ship = $consignee ? $consignee : null;
+        $message = $orderRow['message'];
+        // $goodsImg = SERVER_NAME . $goodsRow['img'];
         ?>
         <header>
             <h4>你即将发起一个节操测试：</h4>
@@ -42,7 +48,7 @@
 
         <div class="tableview">
             <section class="status1 fix">
-                <img class="pic" src="<?=$goodsRow['img']?>"/>
+                <img class="pic" src="<?= $goodsRow['img'] ?>"/>
 
                 <h2>【<?= $goodsRow['origin'] ?>】 <?= $goodsRow['title'] ?></h2>
 
@@ -50,7 +56,7 @@
                 <div>筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
             </section>
         </div>
-        <div class="time">筹集截止时间：<span><?= $leftTime ?></span>  （<?= $expireLabel ?>
+        <div class="time">筹集截止时间：<span><?= $leftTime ?></span> （<?= $expireLabel ?>
             ）<br/>离筹集成功还需<span> <?= $lacks ?> </span>人支持
         </div>
         <div class="information">联系人：<?= $ship['consignee'] ?><br/>联系电话：<?= $ship['mobile'] ?>
@@ -61,5 +67,18 @@
     <?php } ?>
 </div>
 </body>
+
+<script>
+
+    var shareData = {
+        'imgUrl': "http://<?=SERVER_NAME?>/public/img/wexingimg.jpg",
+        'link': "<?=SITE_URL?>/item/order?id=<?=$orderId?>",
+        'title': "<?=$message?>",
+        'desc': "我的人品挑战测试"
+    };
+
+    _namespace_micro.winxinShare(shareData);
+
+</script>
 
 </html>

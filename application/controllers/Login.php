@@ -48,6 +48,8 @@ class Login extends MicroController
     {
         $responseArg = array('code' => 0, 'message' => 'logout complete', 'data' => null);
         $this->_user->logout();
+        header('location:' . SITE_URL);
+        return false;
         echo json_encode($responseArg);
     }
 

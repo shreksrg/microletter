@@ -37,7 +37,7 @@ class Order extends MicroController
             $isExists = $this->_modelOrder->hasItemExists($userId);
             if ($isExists === false) {
                 $this->_modelOrder->memberApplyOrder($this->_user);
-            } else  echo '您已经发了挑战，挑战未结束前不能再发起.</br> <a href="' . SITE_URL . '/order/status">查看我的挑战</a>';
+            } else  echo '您已经发了挑战，挑战未结束前不能再发起.</br> <a href="' . SITE_URL . '/order/status">查看我的挑战</a> </br> <a href="' . SITE_URL . '/login/logout">退出登录</a> ';
 
         } else {
             $request = $this->input->server('REQUEST_METHOD');

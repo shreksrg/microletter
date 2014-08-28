@@ -23,7 +23,7 @@
         <ul><label>我的地址：</label><textarea name="address" class="address"></textarea></ul>
         <ul><label>我的手机：</label><input name="mobile" class="phone" type="text"/></ul>
         <ul><label>手机验证：</label><input name="captcha" class="code" type="text"/>
-            <button class="resend">重新获取</button>
+            <button class="resend" onclick="return false;">重新获取</button>
         </ul>
         <ul><label>我的姓名：</label><input name="fullName" class="name" type="text"/></ul>
         <input type="hidden" name="itemId" value="<?= $itemId ?>"/>
