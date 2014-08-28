@@ -3,10 +3,14 @@
 class Run extends MicroController
 {
 
-
     public function index()
     {
-          echo  strtotime('+3 days 2 hours 14 minutes');
+        phpinfo();
+        return false;
+
+        //CModel::make('login_model');
+
+        echo strtotime('+3 days 2 hours 14 minutes');
         //echo time();
         return false;
 

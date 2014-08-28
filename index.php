@@ -25,7 +25,7 @@
  * @filesource
  */
 
-define('ROOT', __DIR__);
+define('ROOT', dirname(__FILE__));
 
 require(ROOT . '/system/libraries/kint/Kint.class.php');
 
@@ -74,7 +74,8 @@ switch (ENVIRONMENT) {
         exit(1); // EXIT_ERROR
 }
 
-defined('SITE_URL') or define('SITE_URL', 'http://api.microletter.com/index.php');
+//sdefined('SITE_URL') or define('SITE_URL', 'http://api.microletter.com/index.php');
+defined('SITE_URL') or define('SITE_URL', 'http://gq.hailiang.cn/index.php');
 /*
  *---------------------------------------------------------------
  * SYSTEM FOLDER NAME
