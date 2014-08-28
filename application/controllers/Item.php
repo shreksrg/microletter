@@ -78,7 +78,11 @@ class Item extends MicroController
                 echo '项目已关闭';
                 return false;
             }
-            $data['consignee'] = $modOrder->getShipInfo($orderId); //收件人信息
+            //$data['consignee'] = $modOrder->getShipInfo($orderId); //收件人信息
+            $modelLogin = CModel::make('login_model');
+            $userRow = $modelLogin->getUserById($orderRow->user_id);
+            $data['Originator'] = $userRow->fullname;
+            //$data['consignee'] = $modOrder->getShipInfo($orderId); //收件人信息
             CView::show('item/order', $data);
         } else {
             header('location:' . SITE_URL . '/item');

@@ -13,6 +13,7 @@ class Order_model extends CI_Model
      */
     public function matchMobileCaptcha($mobile, $code)
     {
+        return true;
         $time = time();
         $sql = "SELECT id FROM mic_mobile_captcha where isdel=0 and type=1 and  status=0 and expire>=$time and mobile=? and code=? limit 1";
         $query = $this->db->query($sql, array($mobile, $code));
@@ -31,8 +32,17 @@ class Order_model extends CI_Model
      */
     public function apply($user, $form)
     {
-        $uid = $user->id;
-        $addressId = $this->newConsignee($uid, $form); //新增用户收货地址
+        // 注册新用户
+        $modelLogin = CModel::make('login_model');
+        $userId = $modelLogin->register($form);
+        if ($userId == 0) return $this->setErrCode('apply', 1101);
+
+        //用户登录
+        $userObj = new User();
+        $userObj->id = $userId;
+        $modelLogin->setInfo($userObj);
+
+        $addressId = $this->newConsignee($userId, $form); //新增用户收货地址
         if ($addressId <= 0) return $this->setErrCode('apply', 1000);
 
         $itemId = $form['itemId'];
@@ -41,7 +51,7 @@ class Order_model extends CI_Model
         $planItem->goodsRecs = $modPlanItem->getGoodsRecs($itemId);
         $planItem['message'] = $form['message']; //订单留言
 
-        $orderId = $this->createItemOrder($uid, $planItem); //新增项目订单
+        $orderId = $this->createItemOrder($userId, $planItem); //新增项目订单
         if ($orderId <= 0) return $this->setErrCode('apply', 1001);
 
         $recId = $this->newShipAddress($orderId, $form); //新增订单收货地址
@@ -50,14 +60,50 @@ class Order_model extends CI_Model
     }
 
     /**
+     * 会员用户申请订单
+     */
+    public function memberApplyOrder($userObj)
+    {
+        $userId = $userObj->id;
+
+        // 获取会员收货地址
+        $sql = "select * from mic_consignee where isdel=0 and user_id=$userId";
+        $query = $this->db->query($sql);
+        $consignee = $query->row();
+        if (!$consignee) return $this->setErrCode('apply', 1000);
+
+        // 新增项目订单
+        $itemId = $userObj['itemId'];
+        $modPlanItem = CModel::make('planItem_model');
+        $planItem = $modPlanItem->genItem($itemId);
+        $planItem->goodsRecs = $modPlanItem->getGoodsRecs($itemId);
+        $planItem['message'] = $consignee->message;
+        $orderId = $this->createItemOrder($userId, $planItem); //新增项目订单
+        if ($orderId <= 0) return $this->setErrCode('apply', 1001);
+
+        //新增订单收件人地址
+        $address = array(
+            'order_id' => $orderId,
+            'consignee' => $consignee->fullname,
+            'mobile' => $consignee->mobile,
+            'address' => $consignee->address,
+        );
+        $recId = $this->newShipAddress($orderId, $address);
+        if ($recId <= 0) return $this->setErrCode('apply', 1002);
+        return $orderId;
+    }
+
+    /**
      * 增加用户新地址
      */
-    public function newConsignee($userId, $address)
+    public function newConsignee($userId, $values)
     {
-        $fullName = $address['fullName'];
-        $mobile = $address['mobile'];
-        $address = $address['address'];
-        $rt = $this->db->insert('mic_consignee', array('user_id' => $userId, 'fullname' => $fullName, 'mobile' => $mobile, 'address' => $address));
+        $fullName = $values['fullName'];
+        $mobile = $values['mobile'];
+        $address = $values['address'];
+        $message = $values['message'];
+
+        $rt = $this->db->insert('mic_consignee', array('user_id' => $userId, 'fullname' => $fullName, 'mobile' => $mobile, 'address' => $address, 'message' => $message));
         return $rt === true ? $this->db->insert_id() : 0;
     }
 
@@ -284,6 +330,7 @@ class Order_model extends CI_Model
     {
         $data = array('state' => 'none');
         $uid = $user->id;
+        $data['Originator'] = $user->info->fullname;
         $sql = "select * from mic_order where isdel=0 and user_id=? order by add_time desc limit 1";
         $query = $this->db->query($sql, array($uid));
         $orderRow = $query->row();
@@ -304,7 +351,7 @@ class Order_model extends CI_Model
                 $sql = "select count(*) as num from mic_comment where isdel=0 and pay_id=0 and type=0 and order_id=$orderId";
                 $query = $this->db->query($sql);
                 $data['info']['abandon'] = (int)$query->row()->num; //放弃人数
-                $data['info']['consignee'] = $this->getShipInfo($orderId);
+               // $data['info']['consignee'] = $this->getShipInfo($orderId);
             } elseif ($lacks > 0 && $diffTime <= 0) { //结束订单：未完成筹资(失败)
                 $data['state'] = 'fail';
             } elseif ($lacks <= 0) {
@@ -319,25 +366,21 @@ class Order_model extends CI_Model
     /**
      * 项目是否存在正在进行的订单中
      */
-    public function hasItemExists($userId, $itemId)
+    public function hasItemExists($userId, $itemId = 0)
     {
+        $boolean = true;
         $userId = (int)$userId;
         $time = time();
-        $sql = "select * from mic_order where  isdel=0 and status>0 and expire>$time and user_id=$userId order by add_time desc limit 1";
+        $sql = "select * from mic_order where  isdel=0 and user_id=$userId order by add_time desc limit 1";
         $query = $this->db->query($sql);
-        if ($query->row()) {
-            $orderId = $query->row()->id;
-            $itemId = $query->row()->item_id;
-            $quota = 0;
-            $supports = $this->getSupports($orderId); //订单的支付人数
-            $modItem = CModel::make('planItem_model');
-            $itemObj = $modItem->genItem($itemId); //订单项目
-            if ($itemObj->row) $quota = $itemObj->row->quota;
-            $lacks = $quota - $supports;
-            if ($lacks > 0)
-                return true;
+
+        if ($orderRow = $query->row()) {
+            $orderId = $orderRow->id;
+            $orderObj = new ItemOrder($orderId, $query);
+            $state = $this->getOrderState($orderObj);
+            if ($state != 'on') $boolean = false;
         }
-        return false;
+        return $boolean;
     }
 
     /**

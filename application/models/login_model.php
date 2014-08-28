@@ -12,6 +12,22 @@ class Login_model extends CI_Model
         parent::__construct();
     }
 
+    public function register($data)
+    {
+        $mobile = $data['mobile'];
+        $password = md5($data['captcha']);
+        $value = array(
+            'username' => $mobile,
+            'password' => $password,
+            'fullname' => $data['fullName'],
+            'mobile' => $mobile,
+            'type' => 1,
+            'add_time' => time(),
+        );
+        $rt = $this->db->insert('mic_user', $value);
+        return $rt === true ? $this->db->insert_id() : 0;
+    }
+
     /**
      * 验证用户登录
      */
@@ -51,6 +67,22 @@ class Login_model extends CI_Model
         return $return;
     }
 
+
+    public function setInfo($userObj)
+    {
+        $uid = (int)$userObj->id;
+        $sql = "SELECT * FROM mic_user WHERE isdel=0 and id=$uid";
+        $query = $this->db->query($sql);
+        $userObj->info = $query->row();
+    }
+
+    public function getUserById($userId)
+    {
+        $sql = "SELECT * FROM mic_user WHERE isdel=0 and  id=$userId";
+        $query = $this->db->query($sql);
+        return $query->row();
+    }
+
     /**
      * 检查是否登录
      */
@@ -61,4 +93,6 @@ class Login_model extends CI_Model
         if (isset($_SESSION['__UID']) && (int)$_SESSION['__UID'] > 0) $result = true;
         return $result;
     }
+
+
 }

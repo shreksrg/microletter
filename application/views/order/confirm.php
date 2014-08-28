@@ -50,7 +50,7 @@
                 <div>筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
             </section>
         </div>
-        <div class="time">筹集截止时间：<span><?= $leftTime ?></span> 天 （<?= $expireLabel ?>
+        <div class="time">筹集截止时间：<span><?= $leftTime ?></span>  （<?= $expireLabel ?>
             ）<br/>离筹集成功还需<span> <?= $lacks ?> </span>人支持
         </div>
         <div class="information">联系人：<?= $ship['consignee'] ?><br/>联系电话：<?= $ship['mobile'] ?>

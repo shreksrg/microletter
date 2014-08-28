@@ -26,20 +26,21 @@
     $orderRow = (array)$order->row;
     $orderId = $orderRow['id'];
 
-    $consignee = $info['consignee'];
+    // $consignee = $info['consignee'];
 
     $item = $info['item'];
     $itemRow = (array)$item->row;
 
     $goodsRow = $info['goods'];
 
+    $abandon=$info['abandon'];
     $supports = $info['supportNum'];
     $lacks = $info['quota'] - $supports;
     $leftTime = $info['leftTime']
 
     ?>
     <header>
-        <h4>你的朋友 <?= $consignee['consignee'] ?> 发起了节操测试：</h4>
+        <h4>你的朋友 <?= $Originator ?> 发起了节操测试：</h4>
 
         <h3><?= $orderRow['message'] ?></h3>
     </header>
@@ -59,7 +60,7 @@
         位朋友给予了我支持，距离成功达成目标还差<span> <?= $lacks ?> </span>人！<br/>筹集截止时间：<span><?= $leftTime ?></span>
     </div>
     <div class="line_box">
-        <button id="bvRefuse" type="button" class="badguy btn">贬我的人(<?= $info['abandon'] ?>人)</button>
+        <button id="bvRefuse" type="button" class="badguy btn">贬我的人(<?= $abandon ?>人)</button>
         <button id="bvSupport" type="button" class="goodguy btn">支持我的人(<?= $supports ?>人)</button>
     </div>
 
@@ -67,14 +68,14 @@
 </body>
 <script>
     $('#bvRefuse').click(function () {
-        var num = parseInt(<?=$lacks?>);
-        if (num > 0)
+        var num = parseInt(<?=$abandon?>);
+       // if (num > 0)
             location.href = "<?=SITE_URL?>/comment/show?type=0&orderId=<?=$orderId?>";
     })
 
     $('#bvSupport').click(function () {
         var num = parseInt(<?=$supports?>);
-        if (num > 0)
+       // if (num > 0)
             location.href = "<?=SITE_URL?>/comment/show?type=1&orderId=<?=$orderId?>";
         return false;
     })

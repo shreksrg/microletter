@@ -34,6 +34,14 @@ class Login extends MicroController
     }
 
     /**
+     * 用户注册
+     */
+    public function register()
+    {
+
+    }
+
+    /**
      * 用户登出
      */
     public function logout()

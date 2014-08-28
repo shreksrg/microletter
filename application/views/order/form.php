@@ -40,6 +40,8 @@
             $.post(url, $('#frmApply').serializeArray(), function (rep) {
                 if (rep.code == 0) {
                     var reUrl = $('input[name=url]').val() + '?orderId=' + rep.data.orderId;
+                    var mobile = parseInt($.trim($('input[name=mobile]').val()));
+                    document.cookie = "_urMobile=" + mobile + ";path=/";
                     location.href = reUrl;
                 } else alert(rep.message);
             }, 'json')

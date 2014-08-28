@@ -33,7 +33,7 @@
 
     ?>
     <header>
-        <h4>你的朋友 <?= $consignee['consignee'] ?> 发起了节操测试：</h4>
+        <h4>你的朋友 <?= $Originator ?> 发起了节操测试：</h4>
 
         <h3><?= $orderRow['message'] ?></h3>
     </header>
@@ -83,10 +83,27 @@
                 return false;
             })
         </script>
+    <?php } ?>
+
+
     <?php
-    } else {
-        echo '该挑战已经结束';
-    } ?>
+    if ($state == 'achieve') {
+        ?>
+        <!--测试进成功 start-->
+        <div class="time">该项挑战已于 <span><?= $expire ?></span> 结束</div>
+        <div class="status_win"></div>
+        <!--over-->
+    <?php } ?>
+
+    <?php
+    if ($state == 'fail') {
+        ?>
+        <!--测试进失败 start-->
+        <div class="time">该项挑战已于 <span><?= $expire ?></span> 结束</div>
+        <div class="status_lose"></div>
+        <!--over-->
+    <?php } ?>
+
     <div class="line_box">
         <a class="gohome" href="<?= SITE_URL ?>/item">发起的人品大挑战</a>
     </div>
