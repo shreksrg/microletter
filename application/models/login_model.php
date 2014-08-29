@@ -3,7 +3,7 @@
 
 class Login_model extends CI_Model
 {
-    private $_uid;
+    private $_uid=0;
     private $_validateFlag = false;
     protected $_user;
 
@@ -12,10 +12,18 @@ class Login_model extends CI_Model
         parent::__construct();
     }
 
+    public function hashPassword($password)
+    {
+        return md5($password);
+    }
+
+    /**
+     * 用户注册
+     */
     public function register($data)
     {
         $mobile = $data['mobile'];
-        $password = md5($data['captcha']);
+        $password = $this->hashPassword($data['captcha']);
         $value = array(
             'username' => $mobile,
             'password' => $password,
@@ -24,8 +32,13 @@ class Login_model extends CI_Model
             'type' => 1,
             'add_time' => time(),
         );
+
         $rt = $this->db->insert('mic_user', $value);
-        return $rt === true ? $this->db->insert_id() : 0;
+        if($rt===true){
+           $this->_uid = $this->db->insert_id();
+           $this->_user = new User();
+        }
+        return $this->_uid;
     }
 
     /**
@@ -34,7 +47,7 @@ class Login_model extends CI_Model
     public function validate($username, $password)
     {
         $sql = "SELECT * FROM mic_user WHERE username = ? AND password = ?";
-        $query = $this->db->query($sql, array($username, md5($password)));
+        $query = $this->db->query($sql, array($username, $this->hashPassword($password)));
         if ($query->row()) {
             $this->_uid = $query->row()->id;
             $this->_validateFlag = true;
@@ -56,7 +69,7 @@ class Login_model extends CI_Model
     {
         $return = false;
         if ($this->_validateFlag === true && $this->_user) {
-            $sql = "SELECT * FROM mic_user WHERE id={$this->_uid}";
+            $sql = "SELECT * FROM mic_user WHERE isdel=0 and  id={$this->_uid}";
             $query = $this->db->query($sql);
             if ($query->num_rows() > 0) {
                 $this->_user->id = $this->_uid;
@@ -66,7 +79,6 @@ class Login_model extends CI_Model
         }
         return $return;
     }
-
 
     public function setInfo($userObj)
     {

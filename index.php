@@ -28,7 +28,7 @@
 define('ROOT', dirname(__FILE__));
 define('SERVER_NAME', $_SERVER['SERVER_NAME']);
 
-defined('SITE_URL') or define('SITE_URL', 'http://api.microletter.com');
+defined('SITE_URL') or define('SITE_URL', 'http://api.micro.com');
 //defined('SITE_URL') or define('SITE_URL', 'http://gq.hailiang.cn/index.php');
 
 require(ROOT . '/system/libraries/kint/Kint.class.php');
