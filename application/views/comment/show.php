@@ -36,7 +36,7 @@
                     $dateLabel = Utils::diffDateLabel($comment['add_time'], time());
                     ?>
                     <ul>
-                        <h2><?= $comment['fullname'] ?>：<span><?= $dateLabel ?></span></h2>
+                        <h2><?= strlen($comment['fullname'])>0 ?$comment['fullname']:"你的朋友" ?>：<span><?= $dateLabel ?></span></h2>
                         <li><?= $comment['comment'] ?></li>
                     </ul>
                 <?php
@@ -55,5 +55,11 @@
 
 <div id="footer"></div>
 </body>
+<script>
+    var _commentType =<?=$type?>;
+    var _orderId =<?=$orderId?>;
+    var _requestUrl = '<?=SITE_URL?>/comment/getList';
 
+    _namespace_micro_comment.contentLoad();
+</script>
 </html>

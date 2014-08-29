@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------
  * Copyright (c) 2014 hailiang All rights reserved. by Jackal
  ------------------------------------------------------------------------*/
-
+var _namespace_micro = {}
 $(function () {
 
     $(".indexbg").click(function () {
@@ -49,30 +49,33 @@ $(function () {
         $(this).removeClass("show");
     });
 
+    _namespace_micro.loadMask();
+
+    // 关闭弹出层
+    $(".mask").click(function () {
+        $(this).removeClass("show");
+        _namespace_micro.closeMaskCall();
+    });
 
 });
 
+// 加载弹出层
+_namespace_micro.loadMask = function () {
+    $("body").append('<div class="mask"><div class="dailog"><h2>人品大挑战</h2><span></span><a href="###"></a></div></div>');
+}
 
-//验证邮箱 
-//function checkSubmitEmail(){ 
-//    if($("#email").val()==""){ 
-//    	$("#confirmMsg").html("<font color='red'>邮箱地址不能为空！</font>"); 
-//    	$("#email").focus(); 
-//    	return false; 
-//	} 
-//   if(!$("#email").val().match(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/)){ 
-//    	$("#confirmMsg").html("<font color='red'>邮箱格式不正确！请重新输入！</font>"); 
-//    	$("#email").focus(); 
-//		return false; 
-//   } 
-//   return true; 
-//} 
-
-//验证手机
+//关闭回调
+_namespace_micro.closeMaskCall = function () {
+    return false;
+}
 
 
+function alertView(wrongmessage) {
+    $(".mask").addClass("show");
+    $(".dailog span").text(wrongmessage);
+}
 
-var _namespace_micro = {}
+
 _namespace_micro.winxinShare = function (shareData) {
     function shareFriend() {
         WeixinJSBridge.invoke('sendAppMessage', {

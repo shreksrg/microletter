@@ -22,10 +22,18 @@ class Comment extends MicroController
     public function message()
     {
         $request = $this->input->server('REQUEST_METHOD');
+        $modelValidate = CModel::make('validate_model');
         if ($request == 'GET') {
-            $data['orderId'] = $this->input->get('orderId'); //订单id
+            $data['orderId'] = $orderId = $this->input->get('orderId'); //订单id
+
+            $reVal = $modelValidate->hasOrderById($orderId);
+            if ($reVal !== true) {
+                echo('挑战过期或已关闭');
+                return false;
+            }
             $data['payId'] = $this->input->get('payId'); //订单支付项Id
             $data['token'] = sha1($this->_salt . $data['orderId'] . $data['payId']); //用户令牌
+
 
             //获取发起人姓名：即订单收件人姓名
             $modelOrder = CModel::make('order_model');
@@ -43,8 +51,18 @@ class Comment extends MicroController
             //验证token
             $_token = sha1($this->_salt . $orderId . $payId);
             if ($_token !== $token) {
-                CAjax::show(-1, '验证失败');
+                CAjax::show(1008, '验证失败');
             }
+
+            //验证评论id,防止重复评论
+            $_orderId = $this->input->cookie('_commentOrderId');
+            if ($_orderId) {
+                $str = gzinflate(base64_decode($_orderId));
+                $_array = explode(',', $str);
+                if (in_array($orderId, $_array))
+                    CAjax::show(1009, '您已经做出过评论！');
+            }
+
             $newId = $this->_modelComment->newComment($form); //新增留言
             $code = 0;
             $message = 'successful';
@@ -61,6 +79,17 @@ class Comment extends MicroController
                         $message = '系统繁忙,请稍候再试';
                         break;
                 }
+            } else {
+                //设置已评论订单id,增加id到已评论的Id队列cookie中
+                $_orderId = $this->input->cookie('_commentOrderId');
+                $_array = array();
+                if ($_orderId) {
+                    $str = gzinflate(base64_decode($_orderId));
+                    $_array = explode(',', $str);
+                }
+                $_array[] = $orderId;
+                $str = base64_encode(gzdeflate(implode(',', $_array), 9));
+                setcookie('_commentOrderId', $str);
             }
             CAjax::show($code, $message);
         }
@@ -93,6 +122,8 @@ class Comment extends MicroController
             $data['quota'] = $planItem->row->quota; //限定支付总人数
             $data['supports'] = $modOrder->getSupports($orderId); //支付人数
             $args = array('orderId' => $orderId, 'type' => $type, 'page' => 1, 'offset' => 10);
+            $data['orderId'] = $orderId;
+            $data['type'] = $type;
             $data['comments'] = $this->_modelComment->getComments($args); // 订单评论列表
             CView::show('comment/show', $data);
         }
@@ -122,9 +153,15 @@ class Comment extends MicroController
                 exit;
             }
             $args = array('orderId' => $orderId, 'type' => $type, 'page' => $page, 'offset' => 10);
-            $data['comments'] = $this->_modelComment->getComments($args); // 订单评论列表
-            CAjax::show(0, 'successful', $data);
-
+            $comments = $this->_modelComment->getComments($args); // 订单评论列表
+            $list = array();
+            $now = time();
+            foreach ($comments as $comment) {
+                $fullName = strlen($comment['fullname']) > 0 ? $comment['fullname'] : '你的朋友';
+                $time = Utils::diffDateLabel($comment['add_time'], $now);
+                $list[] = array('name' => $fullName, 'say' => $comment['comment'], 'time' => $time);
+            }
+            CAjax::show(0, 'successful', $list);
         } else {
             CAjax::show(1001, '项目不存在');
         }

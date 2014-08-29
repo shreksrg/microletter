@@ -6,7 +6,7 @@ var myScroll,
     pullDownEl, pullDownOffset,
     pullUpEl, pullUpOffset,
     generatedCount = 0,
-    _pullPage = 1;
+    _pullPage = 2;
 
 /**
  * 下拉刷新 （自定义实现此方法）
@@ -27,8 +27,8 @@ function pullDownAction() {
         var el = $('#thelist');
         $.ajax({
             type: "GET",
-            url: "test.json",
-            data: { page: 1 },
+            url: _requestUrl,
+            data: { "page": 1, "orderId": _orderId, "type": _commentType },
             dataType: "json",
             success: function (rep) {
                 if (rep.code != 0) {
@@ -59,8 +59,8 @@ function pullUpAction() {
 
         $.ajax({
             type: "GET",
-            url: "test.json",
-            data: { page: _pullPage },
+            url: _requestUrl,
+            data: { "page": _pullPage, "orderId": _orderId, "type": _commentType },
             dataType: "json",
             success: function (rep) {
                 if (rep.code != 0) {
@@ -70,6 +70,7 @@ function pullUpAction() {
 
                 var data = rep.data;
                 _pullPage++;
+                console.log(_pullPage)
                 for (i = 0; i < data.length; i++) {
                     //console.log(data[i].page);
                     el.append("<ul><h2>" + data[i].name + "<span>" + data[i].time + "</span></h2><li>" + data[i].say + "</li></ul>");
@@ -144,4 +145,10 @@ function loaded() {
 document.addEventListener('touchmove', function (e) {
     e.preventDefault();
 }, false);
-document.addEventListener('DOMContentLoaded', loaded, false); 
+
+
+var _namespace_micro_comment = {};
+
+_namespace_micro_comment.contentLoad = function () {
+    document.addEventListener('DOMContentLoaded', loaded, false);
+}

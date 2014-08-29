@@ -36,38 +36,38 @@
 <script>
     function checkSubmitAll() {
         if ($(".say").val() == "") {
-            alert("内容不能为空！")
+            alertView("内容不能为空！")
             $(".say").focus();
             return false;
         }
 
         if ($(".address").val() == "") {
-            alert("地址不能为空！")
+            alertView("地址不能为空！")
             $(".address").focus();
             return false;
         }
 
 
         if ($.trim($(".phone").val()).length <= 0) {
-            alert("手机号码不能为空！")
+            alertView("手机号码不能为空！")
             $(".phone").focus();
             return false;
         }
 
         if (!$(".phone").val().match(/^1[3|4|5|8][0-9]\d{4,8}$/)) {
-            alert("手机号码格式不正确！请重新输入！")
+            alertView("手机号码格式不正确！请重新输入！")
             $(".phone").focus();
             return false;
         }
 
         if ($.trim($(".code").val()) == "") {
-            alert("验证码不能为空！")
+            alertView("验证码不能为空！")
             $(".code").focus();
             return false;
         }
 
         if ($.trim($(".name").val()) == "") {
-            alert("姓名不能为空！")
+            alertView("姓名不能为空！")
             $(".name").focus();
             return false;
         }
@@ -90,7 +90,7 @@
                     var mobile = parseInt($.trim($('input[name=mobile]').val()));
                     document.cookie = "_urMobile=" + mobile + ";path=/";
                     location.href = reUrl;
-                } else alert(rep.message);
+                } else alertView(rep.message);
             }, 'json')
         }
         return false;
