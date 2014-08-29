@@ -12,10 +12,22 @@ class Login_model extends CI_Model
         parent::__construct();
     }
 
+
+    /**
+     * 加密密码
+     */
+    public function hashPassword($password)
+    {
+        return md5($password);
+    }
+
+    /**
+     * 用户注册
+     */
     public function register($data)
     {
         $mobile = $data['mobile'];
-        $password = md5($data['captcha']);
+        $password = $this->hashPassword($data['captcha']);
         $value = array(
             'username' => $mobile,
             'password' => $password,
@@ -34,7 +46,7 @@ class Login_model extends CI_Model
     public function validate($username, $password)
     {
         $sql = "SELECT * FROM mic_user WHERE username = ? AND password = ?";
-        $query = $this->db->query($sql, array($username, md5($password)));
+        $query = $this->db->query($sql, array($username, $this->hashPassword($password)));
         if ($query->row()) {
             $this->_uid = $query->row()->id;
             $this->_validateFlag = true;
