@@ -69,35 +69,7 @@ $(function () {
 //} 
 
 //验证手机
-function checkSubmitAll() {
-    if ($(".say").val() == "") {
-        alert("内容不能为空！")
-        $(".say").focus();
-        return false;
-    }
 
-    if ($(".address").val() == "") {
-        alert("地址不能为空！")
-        $(".address").focus();
-        return false;
-    }
-
-    if ($(".phone").val() == "") {
-        alert("手机号码不能为空！")
-        $(".phone").focus();
-        return false;
-    }
-
-    if (!$(".phone").val().match(/^1[3|4|5|8][0-9]\d{4,8}$/)) {
-        alert("手机号码格式不正确！请重新输入！")
-        $(".phone").focus();
-        return false;
-    }
-
-    return true;
-    // location.href = "confirm.html";
-
-}
 
 
 var _namespace_micro = {}

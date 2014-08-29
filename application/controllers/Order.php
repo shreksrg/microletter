@@ -15,7 +15,7 @@ class Order extends MicroController
 
     public function _authentication()
     {
-        $filter = array('apply');
+        $filter = array('apply','confirm');
         $controller = $this->uri->rsegment(1);
         $method = $this->uri->rsegment(2);
         $url = $controller . '/' . $method;
@@ -34,7 +34,7 @@ class Order extends MicroController
     {
         $request = $this->input->server('REQUEST_METHOD');
         if ($request == 'POST') {
-            $form = $this->input->post;
+            $form = $this->input->post();
 
             // 表单输入验证
             $validator = FormValidation::make();
