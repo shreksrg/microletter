@@ -32,6 +32,53 @@
     <input type="hidden" name="url" value="<?= SITE_URL ?>/order/confirm"/>
 </div>
 </body>
+
+<script>
+    function checkSubmitAll() {
+        if ($(".say").val() == "") {
+            alertView("内容不能为空！")
+            $(".say").focus();
+            return false;
+        }
+
+        if ($(".address").val() == "") {
+            alertView("地址不能为空！")
+            $(".address").focus();
+            return false;
+        }
+
+
+        if ($.trim($(".phone").val()).length <= 0) {
+            alertView("手机号码不能为空！")
+            $(".phone").focus();
+            return false;
+        }
+
+        if (!$(".phone").val().match(/^1[3|4|5|8][0-9]\d{4,8}$/)) {
+            alertView("手机号码格式不正确！请重新输入！")
+            $(".phone").focus();
+            return false;
+        }
+
+        if ($.trim($(".code").val()) == "") {
+            alertView("验证码不能为空！")
+            $(".code").focus();
+            return false;
+        }
+
+        if ($.trim($(".name").val()) == "") {
+            alertView("姓名不能为空！")
+            $(".name").focus();
+            return false;
+        }
+
+
+        return true;
+        // location.href = "confirm.html";
+
+    }
+</script>
+
 <script>
     $('button[name=btnSubmit]').click(function () {
         var reChk = checkSubmitAll();
@@ -43,7 +90,7 @@
                     var mobile = parseInt($.trim($('input[name=mobile]').val()));
                     document.cookie = "_urMobile=" + mobile + ";path=/";
                     location.href = reUrl;
-                } else alert(rep.message);
+                } else alertView(rep.message);
             }, 'json')
         }
         return false;

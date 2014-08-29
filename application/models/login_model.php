@@ -3,7 +3,7 @@
 
 class Login_model extends CI_Model
 {
-    private $_uid=0;
+    private $_uid;
     private $_validateFlag = false;
     protected $_user;
 
@@ -12,6 +12,10 @@ class Login_model extends CI_Model
         parent::__construct();
     }
 
+
+    /**
+     * 加密密码
+     */
     public function hashPassword($password)
     {
         return md5($password);
@@ -32,13 +36,8 @@ class Login_model extends CI_Model
             'type' => 1,
             'add_time' => time(),
         );
-
         $rt = $this->db->insert('mic_user', $value);
-        if($rt===true){
-           $this->_uid = $this->db->insert_id();
-           $this->_user = new User();
-        }
-        return $this->_uid;
+        return $rt === true ? $this->db->insert_id() : 0;
     }
 
     /**
@@ -69,7 +68,7 @@ class Login_model extends CI_Model
     {
         $return = false;
         if ($this->_validateFlag === true && $this->_user) {
-            $sql = "SELECT * FROM mic_user WHERE isdel=0 and  id={$this->_uid}";
+            $sql = "SELECT * FROM mic_user WHERE id={$this->_uid}";
             $query = $this->db->query($sql);
             if ($query->num_rows() > 0) {
                 $this->_user->id = $this->_uid;
@@ -79,6 +78,7 @@ class Login_model extends CI_Model
         }
         return $return;
     }
+
 
     public function setInfo($userObj)
     {
