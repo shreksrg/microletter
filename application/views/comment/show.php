@@ -13,53 +13,32 @@
     <link rel="stylesheet" type="text/css" href="/public/css/main.css">
     <script src="/public/js/jquery.min.js"></script>
     <script src="/public/js/main.js"></script>
-    <script type="application/javascript" src="/public/js/iscroll.js"></script>
-    <script type="application/javascript" src="/public/js/iscroll_config.js"></script>
+
 </head>
 
 
 <body>
-<div id="wrapper">
-    <div id="scroller">
-        <div id="pullDown">
-            <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新...</span>
-        </div>
-
-        <div class="statustitle">
-            已有 <span><?= $supports ?></span> 位朋友给予了我支持，距离成功达成目标还差<span> <?= $quota - $supports ?> </span>人！
-        </div>
-
-        <div id="thelist" class="comment">
+<div class="page show goodguy">
+    <div class="statustitle">
+        已有 <span><?= $supports ?></span> 位朋友给予了我支持，距离成功达成目标还差<span> <?= $quota - $supports ?> </span>人！
+    </div>
+    <div class="comment">
+        <?php
+        if ($comments) {
+            foreach ($comments as $comment) {
+                $dateLabel = Utils::diffDateLabel($comment['add_time'], time());
+                ?>
+                <ul>
+                    <h2><?= $comment['fullname'] ?>：<span><?= $dateLabel ?></span></h2>
+                    <li><?= $comment['comment'] ?></li>
+                </ul>
             <?php
-            if ($comments) {
-                foreach ($comments as $comment) {
-                    $dateLabel = Utils::diffDateLabel($comment['add_time'], time());
-                    ?>
-                    <ul>
-                        <h2><?= strlen($comment['fullname'])>0 ?$comment['fullname']:"你的朋友" ?>：<span><?= $dateLabel ?></span></h2>
-                        <li><?= $comment['comment'] ?></li>
-                    </ul>
-                <?php
-                }
-            } else {
-                echo '尚无评论';
-            } ?>
-        </div>
-
-        <div id="pullUp">
-            <span class="pullUpIcon"></span><span class="pullUpLabel">上拉加载更多...</span>
-        </div>
-
+            }
+        } else {
+            echo '尚无评论';
+        } ?>
     </div>
 </div>
-
-<div id="footer"></div>
 </body>
-<script>
-    var _commentType =<?=$type?>;
-    var _orderId =<?=$orderId?>;
-    var _requestUrl = '<?=SITE_URL?>/comment/getList';
 
-    _namespace_micro_comment.contentLoad();
-</script>
 </html>

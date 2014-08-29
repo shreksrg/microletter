@@ -55,10 +55,9 @@ class Comment_model extends CI_Model
         $offset = isset($args['offset']) ? (int)$args['offset'] : 10;
         if ($page <= 1) $page = 1;
         $page--;
-
         $comments = array();
         $sql = "select * from mic_comment where isdel=0 and order_id=? and type=? order by add_time desc limit ?,?";
-        $query = $this->db->query($sql, array($args['orderId'], $args['type'], $page * $offset, $offset));
+        $query = $this->db->query($sql, array($args['orderId'], $args['type'], $page, $offset));
         if ($query->row())
             $comments = $query->result_array();
         return $comments;

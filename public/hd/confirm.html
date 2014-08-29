@@ -16,7 +16,7 @@
 
 
 $(function(){
-	
+
 	var shareData = {
 		imgUrl: "http://gq.hailiang.cn/hd/img/wexingimg.jpg",
 		timeLineLink: "gq.hailiang.cn/hd/support.html",
@@ -34,7 +34,7 @@ $(function(){
                             "img_height":"640",
                             "link":"gq.hailiang.cn/hd/support.html",
                             "desc":'你的朋友分享一个人品测试，快来帮帮他吧',
-                            "title":'人品测试',
+                            "title":'人品测试'
                             }, function(res) {
                             _report('send_msg', res.err_msg);
                             })
@@ -46,7 +46,7 @@ $(function(){
                             "img_height":"640",
                             "link":"gq.hailiang.cn/hd/support.html",
                             "desc":'你的朋友分享一个人品测试，快来帮帮他吧',
-                            "title":'人品测试',
+                            "title":'人品测试'
                             }, function(res) {
                             _report('timeline', res.err_msg);
                             });
@@ -76,7 +76,7 @@ $(function(){
         WeixinJSBridge.on('menu:share:weibo', function(argv){
             shareWeibo();
             });
-			
+
         }, false)
 });
 

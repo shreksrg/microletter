@@ -27,26 +27,22 @@
         <input type="hidden" name="orderId" value="<?= $orderId ?>"/>
         <input type="hidden" name="payId" value="<?= $payId ?>"/>
     </form>
-    <button type="button" id="btnSendMsg" class="sending btn">发送留言</button>
+    <button type="button"  id="btnSendMsg" class="sending btn">发送留言</button>
     <div class="line_box">
         <a class="gohome" href="<?= SITE_URL ?>/item"">发起的人品大挑战</a>
     </div>
 </div>
 </body>
 <script>
-
-    _namespace_micro.closeMaskCall = function () {
-        location.href = "<?=SITE_URL?>/item";
-    }
-
     $('#btnSendMsg').click(function () {
         var frm = $('form');
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {
             if (rep.code == 0) {
-                alertView("留言成功！立即开始我的人品测试");
+                alert("留言成功！立即开始我的人品测试");
+                location.href = "<?=SITE_URL?>/item";
             } else {
                 var errCode = rep.code;
-                alertView(rep.message)
+                alert(rep.message)
             }
         }, 'json')
         return false;

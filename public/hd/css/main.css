@@ -12,11 +12,6 @@ html ,body {height:100%;}
 body{ font:12px/1.5 '微软雅黑' ;margin:0;padding:0;height: 100%;background:url(../img/bg.jpg);background-size:27px 27px;color:#333}
 button.btn{width:90%;height:40px;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #ff723e), color-stop(1, #ff4803)); /*linear-gradient(0deg,#ff4803,#ff723e);*/border:0;border-radius:5px;margin:20px auto;display:block;color:white;font-size:16px}
 a{ text-decoration:none}
-.dailog{width:80%;height:120px;background:#fff;border:2px #000 solid;border-radius:10px;position: fixed;top: 0;left: 0;bottom: 0;right: 0;margin: auto;}
-.dailog h2{width:100%;height:35px;background:#000;color:#fff;text-align:center;line-height:35px;}
-.dailog span{display:block;height:65px;overflow:hidden;padding:10px;text-align:center;line-height:65px;font-size:14px;}
-.dailog a{top:-10px;right:-10px;position: absolute;display:block;width:30px;height:30px;background:url(../img/close_dailog.png) no-repeat;background-size:30px 30px;color:#fff;text-align:center;}
-.mask{position: absolute;top:0;left:0;width:100%;height:100%;display:none}
 /* index */
 .indexbg{position: absolute;width:100%;height:100%;background:url(../img/indexbg.png) no-repeat;background-size:568px 568px; background-position: 50% 50%; display:none;}
 .dismiss{-webkit-animation: shine1 .8s ease-out 0s 1 forwards;}
@@ -116,66 +111,6 @@ header h3{margin:0 0 20px;}
 .comment ul h2{width:100%;height:20px;overflow:hidden;line-height:20px;font-size:12px;margin:0 0 10px 0}
 .comment ul h2 span{float:right;color:#666;}
 .comment ul li{width:100%;overflow:hidden;}
-
-
-/*iscroll*/
-#wrapper {position:absolute; z-index:1;top:0; bottom:0; left:0;width:100%;	overflow:auto;}
-#scroller {position:relative;-webkit-tap-highlight-color:rgba(0,0,0,0);float:left;width:100%;padding:0;}
-/**
- *
- * 下拉样式 Pull down styles
- *
- */
-#pullDown, #pullUp {
-	background:#fff;
-	height:40px;
-	line-height:40px;
-	padding:5px 10px;
-	border-bottom:1px solid #ccc;
-	font-weight:bold;
-	font-size:14px;
-	color:#888;
-}
-#pullDown .pullDownIcon, #pullUp .pullUpIcon  {
-	display:block; float:left;
-	width:40px; height:40px;
-	background:url(../img/pull-icon@2x.png) 0 0 no-repeat;
-	-webkit-background-size:40px 80px; background-size:40px 80px;
-	-webkit-transition-property:-webkit-transform;
-	-webkit-transition-duration:250ms;	
-}
-#pullDown .pullDownIcon {
-	-webkit-transform:rotate(0deg) translateZ(0);
-}
-#pullUp .pullUpIcon  {
-	-webkit-transform:rotate(-180deg) translateZ(0);
-}
-
-#pullDown.flip .pullDownIcon {
-	-webkit-transform:rotate(-180deg) translateZ(0);
-}
-
-#pullUp.flip .pullUpIcon {
-	-webkit-transform:rotate(0deg) translateZ(0);
-}
-
-#pullDown.loading .pullDownIcon, #pullUp.loading .pullUpIcon {
-	background-position:0 100%;
-	-webkit-transform:rotate(0deg) translateZ(0);
-	-webkit-transition-duration:0ms;
-
-	-webkit-animation-name:loading;
-	-webkit-animation-duration:2s;
-	-webkit-animation-iteration-count:infinite;
-	-webkit-animation-timing-function:linear;
-}
-
-@-webkit-keyframes loading {
-	from { -webkit-transform:rotate(0deg) translateZ(0); }
-	to { -webkit-transform:rotate(360deg) translateZ(0); }
-}
-
-
 }
 
 /* 兼容iphone4/4s */

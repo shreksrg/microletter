@@ -43,9 +43,8 @@
             console.log($rep);
             if ($rep.code == 0) {
                 window.location.href = $('input[name=url]').val();
-            } else {
-                alertView($rep.message)
-            }
+            } else alert($rep.message)
+
         }, 'json')
         return false;
     })

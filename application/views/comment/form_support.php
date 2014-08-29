@@ -37,18 +37,15 @@
 </div>
 </body>
 <script>
-    _namespace_micro.closeMaskCall = function () {
-        location.href = "<?=SITE_URL?>/item";
-    }
-
     $('#btnSendMsg').click(function () {
         var frm = $('form');
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {
             if (rep.code == 0) {
                 alert("支持成功！立即开始我的人品测试");
+                location.href = "<?=SITE_URL?>/item";
             } else {
                 var errCode = rep.code;
-                alertView(rep.message)
+                alert(rep.message)
             }
         }, 'json')
         return false;

@@ -10,7 +10,6 @@ class Micro extends MicroBase
     {
         $micro = new self();
         $micro->setPathOfAlias('application', APPPATH);
-        self::import('application.core.*');
         self::import('application.controllers.*');
         self::import('application.models.*');
         self::import('application.libraries.*');

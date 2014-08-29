@@ -26,15 +26,21 @@ class Order_model extends CI_Model
 
     /**
      * 订单申请
+     * @param User $user 用户对象
      * @param array $form 申请表单数据
      * @return boolean
      */
-    public function apply($form)
+    public function apply($user, $form)
     {
         // 注册新用户
         $modelLogin = CModel::make('login_model');
         $userId = $modelLogin->register($form);
         if ($userId == 0) return $this->setErrCode('apply', 1101);
+
+        //用户登录
+        $userObj = new User();
+        $userObj->id = $userId;
+        $modelLogin->setInfo($userObj);
 
         $addressId = $this->newConsignee($userId, $form); //新增用户收货地址
         if ($addressId <= 0) return $this->setErrCode('apply', 1000);

@@ -357,8 +357,15 @@ class MicroBase
      * PLEASE RUN 'build autoload' COMMAND TO UPDATE THIS ARRAY.
      */
     private static $_coreClasses = array(
-       // 'ccc' => '/core/cccc.php',
-
+        'CAjax' => '/core/CAjax.php',
+        'CCApplication' => '/core/CCApplication.php',
+        'CComponent' => '/core/CComponent.php',
+        'CException' => '/core/CException.php',
+        'CException' => '/core/CException.php',
+        'CModel' => '/core/CModel.php',
+        'CSession' => '/core/CSession.php',
+        'CUser' => '/core/CUser.php',
+        'CView' => '/core/CView.php',
     );
 }
 
