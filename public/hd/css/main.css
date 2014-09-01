@@ -60,9 +60,12 @@ a{ text-decoration:none}
 .submit button.resend{width:36%;height:34px;background:#f6f5b5;border:0;float:right;margin:-34px 5% 0 0;font-size:14px;color:#333}
 
 /* confirm *//* support */
-header{width:90%;margin:0 auto;text-align:center}
+header{width:90%;margin:0 auto;text-align:center;padding:0 5%}
 header h4{text-align:left;color:#666;margin:15px 0;}
 header h3{margin:0 0 20px;}
+header h4.fix{text-align:left;color:#333;margin:50px 0 0;font-size:16px;}
+header h3.fix{margin:0 0 20px;font-size:24px;margin:15px 0 35px;color:#ff4702}
+
 .time, .information, .conts,test_status{width:70%;overflow:hidden;margin:0 auto 30px 8%;line-height:20px;padding-left:60px;min-height:32px;}
 .time{background:url(../img/icon_clock.png) no-repeat 0 5%;background-size:31px 32px;}
 .information{background:url(../img/icon_person.png) no-repeat 0 5%;background-size:37px 34px;}
@@ -105,7 +108,9 @@ header h3{margin:0 0 20px;}
 .statustitle{background:url(../img/noface.png) no-repeat center 10px;background-size:62px 61px;}
 .statustitle.fix{padding-top:0;background:url()}
 .successtitle{background:url(../img/successface.png) no-repeat center 10px;background-size:50px 58px;}
+.successtitle.fix{font-size:18px;background:url(../img/payfinishface.png) no-repeat center 10px;background-size:50px 58px;}
 .failtitle{background:url(../img/failface.png) no-repeat center 10px;background-size:50px 58px;}
+.failtitle.fix{font-size:18px;background:url(../img/disagreeface.png) no-repeat center 10px;background-size:50px 58px;}
 .disagreetitle span, .agreetitle span, .statustitle span, .successtitle span, .failtitle span{font-size:16px;color:#0090f5}
 .delivertips{width:90%;margin:0 auto;text-align:center;font-size:14px;}
 
