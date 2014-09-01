@@ -53,6 +53,7 @@ class Payment_model extends CI_Model
             'order_sn' => $orderRow->sn, //项目项订单编码
             'pay_sn' => $paySn, // 支付项编码
             'type' => 2, // 支付类型
+            'status' => 1, // 支付状态,开发状态为已经支付，生产环境请改为0
             'amount' => $amount, //支付金额
             'add_time' => time()
         );
