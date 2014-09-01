@@ -37,7 +37,7 @@
 
     var _validation = false;
     _namespace_micro.closeMaskCall = function () {
-        if (_validation === true)
+        if (_validation == true)
             location.href = "<?=SITE_URL?>/item";
     }
 
@@ -53,8 +53,7 @@
         var frm = $('form');
         _namespace_micro.comment.chkForm();
         if (_validation == false)  return false
-        console.log(_validation);
-        return false;
+
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {
             if (rep.code == 0) {
                 alertView("留言成功！立即开始我的人品测试");
