@@ -42,7 +42,7 @@
     }
 
     _namespace_micro.comment = {'chkForm': function () {
-        if ($.trim($('[name=content]').html()) == "") {
+        if ($.trim($('[name=content]').val()) == "") {
             alertView("请填写您的留言");
             return  false;
         }
@@ -52,7 +52,9 @@
     $('#btnSendMsg').click(function () {
         var frm = $('form');
         _namespace_micro.comment.chkForm();
-        if (_validation === false)  return false
+        if (_validation == false)  return false
+        console.log(_validation);
+        return false;
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {
             if (rep.code == 0) {
                 alertView("留言成功！立即开始我的人品测试");

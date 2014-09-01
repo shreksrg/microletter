@@ -49,7 +49,7 @@
             alertView("请填写您的姓名");
             return  false;
         }
-        if ($.trim($('[name=content]').html()) == "") {
+        if ($.trim($('[name=content]').val()) == "") {
             alertView("请填写您的留言");
             return  false;
         }
