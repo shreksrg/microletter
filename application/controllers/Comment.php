@@ -63,18 +63,10 @@ class Comment extends MicroController
                     CAjax::show(1009, '您已经做出过评论！');
             }
 
-
-            // 表单输入验证
-            $validator = FormValidation::make();
-            $validator->set_rules('fullName', 'FullName', 'xss_clean');
-            $validator->set_rules('content', 'Content', 'required|xss_clean');
-            if ($validator->run() == false)
-                CAjax::show('1010', '表单输入值不合法');
-
             $newId = $this->_modelComment->newComment($form); //新增留言
             $code = 0;
             $message = 'successful';
-            if ($newId <= 0) {
+            if ($newId == 0) {
                 $code = $this->_modelComment->getErrCode();
                 switch ($code) {
                     case 1001:

@@ -49,15 +49,20 @@ class Payment_model extends CI_Model
         //产生支付项id
         $paySn = UUID::fast_uuid(4);
         $value = array(
-            'orderId' => $orderRow->id, //项目项订单Id
-            'orderSn' => $orderRow->sn, //项目项订单编码
-            'paySn' => $paySn, // 支付项编码
+            'order_id' => $orderRow->id, //项目项订单Id
+            'order_sn' => $orderRow->sn, //项目项订单编码
+            'pay_sn' => $paySn, // 支付项编码
+            'type' => 2, // 支付类型
             'amount' => $amount, //支付金额
             'add_time' => time()
         );
 
-        $reBoolean = $this->db->insert($value);
-        return $reBoolean === true ? $value : false;
+        $reBoolean = $this->db->insert('mic_payment_item', $value);
+        if ($reBoolean === true) {
+            $value['pay_id'] = $this->db->insert_id();
+            return $value;
+        }
+        return false;
     }
 
     /**

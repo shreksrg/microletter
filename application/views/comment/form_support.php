@@ -37,23 +37,29 @@
 </div>
 </body>
 <script>
+
+    var _validation = false;
     _namespace_micro.closeMaskCall = function () {
-        location.href = "<?=SITE_URL?>/item";
+        if (_validation === true)
+            location.href = "<?=SITE_URL?>/item";
     }
 
-    _namespace_micro.comment = {'chkSubmit': function () {
-        if ($.trim($('input[name=fullName]')) == "") {
+    _namespace_micro.comment = {'chkForm': function () {
+        if ($.trim($('input[name=fullName]').val()) == "") {
             alertView("请填写您的姓名");
             return  false;
         }
-        if ($.trim($('input[name=content]')) == "") {
+        if ($.trim($('[name=content]').html()) == "") {
             alertView("请填写您的留言");
             return  false;
         }
+        _validation = true;
     }}
 
     $('#btnSendMsg').click(function () {
         var frm = $('form');
+        _namespace_micro.comment.chkForm();
+        if (_validation === false)  return false
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {
             if (rep.code == 0) {
                 alertView("支持成功！立即开始我的人品测试");

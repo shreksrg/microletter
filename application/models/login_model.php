@@ -101,7 +101,6 @@ class Login_model extends CI_Model
     public function checkLogin($user)
     {
         $result = false;
-
         if (isset($_SESSION['__UID']) && (int)$_SESSION['__UID'] > 0) $result = true;
         return $result;
     }

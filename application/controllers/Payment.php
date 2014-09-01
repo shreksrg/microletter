@@ -12,6 +12,19 @@ class Payment extends MicroController
 
     public function index()
     {
+        $code = 0;
+        $message = 'successful';
+        $orderId = (int)$this->input->get('orderId');
+        $type = (int)$this->input->get('type'); //支付方式
+        $type = 2; //支付宝
+        $payItem = $this->_modelPayment->newPayItem($orderId, $type); //产生支付项数据
+        if ($payItem === false) {
+            $code = $this->_modelPayment->errCode;
+            $message = '挑战项目无效';
+        } else
+            CAjax::show($code, $message, array('orderId' => $orderId, 'payId' => $payItem['pay_id']));
+        return false;
+
         $orderId = (int)$this->input->get('orderId');
         if ($orderId <= 0) CAjax::show(1001, 'failure');
         else {
