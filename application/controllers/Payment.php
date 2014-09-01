@@ -30,47 +30,61 @@ class Payment extends MicroController
         CAjax::show($code, $message, array('orderId' => $orderId, 'payId' => $payId));
     }
 
-
-    // 支付宝
-    protected function aliPay($orderObj)
+    /**
+     * 支付确认
+     */
+    public function confirm()
     {
-        $orderRow = $orderObj->row;
-        $itemId = $orderRow->item_id;
-        $modelItem = CModel::make('planItem_model');
-        $itemObj = $modelItem->genItem($itemId);
-
-        $outSn = UUID::fast_uuid(6); //外部交易号,由支付宝返回
-        $amount = ($orderRow->gross / $itemObj->row->quota); // 支付金额
-
-        //产生支付项id
-        $orderRow = $orderObj->row;
-        $payItems = array(
-            'orderId' => $orderRow->id,
-            'orderSn' => $orderRow->sn,
-            'orderGross' => $orderRow->gross,
-            'outSn' => $outSn,
-            'amount' => $amount,
-            'type' => 2, //支付宝支付
-        );
-        return $this->_modelPayment->newPaymentItem($payItems);
+        $data = array();
+        CView::show('payment/confirm', $data);
     }
 
-    //银联支付
-    protected function unionPay()
+    /**
+     * 提交支付
+     */
+    public function submit()
     {
+        $request = $this->input->server('REQUEST_METHOD');
+        $orderId = (int)$this->input->get('orderId');
+        if ($request == 'GET') {
+            //响应返回支付订单确认页
+            $data = array();
+            CView::show('payment/confirm', $data);
+        } else {
+            //生成支付提交表单
+            $orderId = (int)$this->input->get('orderId');
+            $type = (int)$this->input->get('type'); //支付方式
+            $payItem = $this->_modelPayment->newPayItem($orderId, $type); //产生支付项数据
 
+            if ($type == 1) {
+                $form = AliPay::form($payItem);
+                CView::show('payment/formAliPay', $form);
+                return false;
+            }
+
+            if ($type == 2) {
+                $form = MicroPay::form($payItem);
+                CView::show('payment/formMicroPay', $form);
+                return false;
+            }
+        }
     }
 
-    // 微信支付
-    protected function microPay()
+    /**
+     * 支付宝回调接口
+     */
+    public function apiAliPay()
     {
-
-    }
-
-
-    //其他支付
-    protected function otherPay()
-    {
-
+        $method = $this->input->server('REQUEST_METHOD');
+        if ($method === 'GET') {
+            //响应返回前端通知页面
+            CView::show('payment/notify');
+        } else {
+            //后端通知
+            $data = $this->input->post();
+            $reVal = AliPay::notify($data);
+            if ($reVal === true)
+                $this->_modelPayment->updatePayment($data); //更新支付状态
+        }
     }
 }

@@ -2,57 +2,70 @@
 
 class Payment_model extends CI_Model
 {
-    protected $_errCode = array();
+    protected $_errCode = 0;
+    protected $_errCodes = array();
     protected $_orders = array();
 
-    /**
-     * 获取订单对象
-     */
-    public function getOrder($orderId)
+    public function setErrCode($code)
     {
-        $orderObj = null;
-        if (isset($this->_orders[$orderId]))
-            $orderObj = $this->_orders[$orderId];
-        return $orderObj;
+        $this->_errCode = $code;
+    }
+
+    public function getErrCode()
+    {
+        return $this->_errCode;
     }
 
     /**
-     * 验证该订单状态
+     * 新增支付项
      */
-    public function checkOrder($orderId)
+    public function newPayItem($orderId, $type)
     {
-        $flag = false;
-        $time = time();
-        $sql = "select * from mic_order where isdel=0 and status=1 and id=? and expire>? ";
+        $modelOrder = CModel::make('order_model');
+        $orderObj = $modelOrder->genOrder($orderId);
 
-        $query = $this->db->query($sql, array($orderId, $time));
-        if ($query->row()) {
-            $orderId = $query->row()->id;
-            $orderObj = new ItemOrder($orderId, $query);
-            $this->_orders[$orderId] = $orderObj;
-            $flag = true;
+        if (($orderRow = $orderObj->row)) {
+            $itemId = $orderRow->item_id;
+            $modItem = CModel::make('planItem_model');
+            $orderObj->item = $modItem->genItem($itemId); //订单项目
+            if (!$orderObj->item->row) {
+                $this->setErrCode(1002); //订单项目无效
+                return false;
+            }
+        } else {
+            $this->setErrCode(1001);
+            return false;
         }
-        return $flag;
+
+        $state = $modelOrder->getOrderState($orderObj);
+        if ($state != 'on') {
+            $this->setErrCode(1003); //订单过期或已经完成
+            return false;
+        }
+
+        //获取项目订单
+        $amount = ($orderRow->gross / $orderObj->item->row->quota); // 支付金额
+
+        //产生支付项id
+        $paySn = UUID::fast_uuid(4);
+        $value = array(
+            'orderId' => $orderRow->id, //项目项订单Id
+            'orderSn' => $orderRow->sn, //项目项订单编码
+            'paySn' => $paySn, // 支付项编码
+            'amount' => $amount, //支付金额
+            'add_time' => time()
+        );
+
+        $reBoolean = $this->db->insert($value);
+        return $reBoolean === true ? $value : false;
     }
 
     /**
-     * 创建支付记录项
+     * 更新支付项状态
      */
-    public function newPaymentItem($values)
+    public function updatePayment($data)
     {
-        $data = array(
-            'order_id' => $values['orderId'],
-            'order_sn' => $values['orderSn'],
-            'order_gross' => $values['orderGross'],
-            'out_sn' => $values['outSn'],
-            'amount' => $values['amount'],
-            'type' => $values['type'],
-            'pay_time' => time(),
-            'status' => 1,
-        );
-        $this->db->insert('mic_payment_item', $data);
-        $newId = (int)$this->db->insert_id();
-        if ($newId <= 0) $this->_errCode = 1000; //插入失败
-        return $newId;
+        return true;
     }
+
 }

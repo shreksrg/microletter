@@ -32,7 +32,7 @@
     </form>
     <button id="btnSendMsg" type="button" class="sending btn">发送留言</button>
     <div class="line_box">
-        <a class="gohome" href="<?=SITE_URL?>/item">发起的人品大挑战</a>
+        <a class="gohome" href="<?= SITE_URL ?>/item">发起的人品大挑战</a>
     </div>
 </div>
 </body>
@@ -41,11 +41,22 @@
         location.href = "<?=SITE_URL?>/item";
     }
 
+    _namespace_micro.comment = {'chkSubmit': function () {
+        if ($.trim($('input[name=fullName]')) == "") {
+            alertView("请填写您的姓名");
+            return  false;
+        }
+        if ($.trim($('input[name=content]')) == "") {
+            alertView("请填写您的留言");
+            return  false;
+        }
+    }}
+
     $('#btnSendMsg').click(function () {
         var frm = $('form');
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {
             if (rep.code == 0) {
-                alert("支持成功！立即开始我的人品测试");
+                alertView("支持成功！立即开始我的人品测试");
             } else {
                 var errCode = rep.code;
                 alertView(rep.message)

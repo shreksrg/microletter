@@ -397,10 +397,20 @@ class Order_model extends CI_Model
             $supports = $this->getSupports($orderId); //订单的支付人数
 
             if ($itemObj === null) {
-                $modItem = CModel::make('planItem_model');
-                $itemObj = $modItem->genItem($itemId); //订单项目
+                if ($orderObj->item !== null) {
+                    $itemObj = $orderObj->item;
+                } else {
+                    $modItem = CModel::make('planItem_model');
+                    $itemObj = $modItem->genItem($itemId); //订单项目
+                }
             }
-            if ($itemObj->row) $quota = $itemObj->row->quota;
+
+            if ($itemObj->row) {
+                $quota = $itemObj->row->quota;
+            } else {
+                return $state = 'nonItem';
+            }
+
             $lacks = $quota - $supports;
 
             if ($diffTime > 0 && $lacks > 0) { // 订单进行中

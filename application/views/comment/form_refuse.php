@@ -39,6 +39,13 @@
         location.href = "<?=SITE_URL?>/item";
     }
 
+    _namespace_micro.comment = {'chkSubmit': function () {
+        if ($.trim($('input[name=content]')) == "") {
+            alertView("请填写您的留言");
+            return  false;
+        }
+    }}
+
     $('#btnSendMsg').click(function () {
         var frm = $('form');
         $.post(frm.attr('action'), frm.serializeArray(), function (rep) {

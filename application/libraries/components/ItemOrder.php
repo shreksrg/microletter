@@ -5,6 +5,7 @@ class ItemOrder extends CCApplication
     protected $_orderId = 0;
     protected $_row = null;
     protected $_recordSet;
+    protected $_planItem = null;
     static protected $_orders = array();
 
     public function __construct($orderId, $recordSet = null)
@@ -64,5 +65,15 @@ class ItemOrder extends CCApplication
         if ($row)
             $time = Utils::getDiffTime(time(), $row->expire);
         return $time;
+    }
+
+    public function setItem($itemObj)
+    {
+        $this->_planItem = $itemObj;
+    }
+
+    public function getItem()
+    {
+        return $this->_planItem;
     }
 }
