@@ -64,7 +64,7 @@ _namespace_micro.loadMask = function () {
     $("body").append('<div class="mask"><div class="dailog"><h2>人品大挑战</h2><span></span><a href="###"></a></div></div>');
 }
 
-//关闭回调
+//关闭弹出层回调
 _namespace_micro.closeMaskCall = function () {
     return false;
 }
