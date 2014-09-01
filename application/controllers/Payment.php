@@ -10,6 +10,9 @@ class Payment extends MicroController
         $this->_modelPayment = CModel::make('payment_model');
     }
 
+    /**
+     * 生成支付项订单
+     */
     public function index()
     {
         $code = 0;
@@ -43,14 +46,6 @@ class Payment extends MicroController
         CAjax::show($code, $message, array('orderId' => $orderId, 'payId' => $payId));
     }
 
-    /**
-     * 支付确认
-     */
-    public function confirm()
-    {
-        $data = array();
-        CView::show('payment/confirm', $data);
-    }
 
     /**
      * 提交支付
@@ -61,13 +56,62 @@ class Payment extends MicroController
         $orderId = (int)$this->input->get('orderId');
         if ($request == 'GET') {
             //响应返回支付订单确认页
-            $data = array();
+            $modelOrder = CModel::make('order_model');
+            $orderObj = $modelOrder->genOrder($orderId);
+
+            if (($orderRow = $orderObj->row)) {
+                $itemId = $orderRow->item_id;
+                $modItem = CModel::make('planItem_model');
+                $orderObj->item = $modItem->genItem($itemId); //订单项目
+                if (!$orderObj->item->row) {
+                    echo "项目已关闭无效";
+                    return false;
+                }
+            } else {
+                echo "无效的挑战项目";
+                return false;
+            }
+
+            $state = $modelOrder->getOrderState($orderObj);
+            if ($state != 'on') {
+                echo "该挑战已结束,谢谢你的支持"; //订单过期或已经完成
+                return false;
+            }
+
+            //发起人姓名
+            $modelLogin = CModel::make('login_model');
+            $userRow = $modelLogin->getUserById($orderRow->user_id);
+            if ($userRow) {
+                $data['originator'] = $userRow->fullname;
+            } else {
+                echo "挑战人不存在";
+                return false;
+            }
+
+            //支付费用
+            $data['amount'] = ($orderRow->gross / $orderObj->item->row->quota); // 支付金额
+            //产品信息
+            $data['goods'] = $modItem->getGoodsRecs($orderObj->item->row->id)->row_array();
+            // 订单信息
+            $data['order'] = $orderObj;
+
             CView::show('payment/confirm', $data);
         } else {
             //生成支付提交表单
-            $orderId = (int)$this->input->get('orderId');
-            $type = (int)$this->input->get('type'); //支付方式
+            $orderId = (int)$this->input->post('orderId');
+            $type = (int)$this->input->post('type'); //支付方式
+
+            //生成支付订单记录
             $payItem = $this->_modelPayment->newPayItem($orderId, $type); //产生支付项数据
+            if ($payItem !== false) {
+                $token = base64_encode($payItem['amount']);
+                header('location:' . SITE_URL . '/payment/notify?token=' . $token);
+                // CView::show('payment/notify', array('amount' => $payItem['amount']));
+            } else {
+                echo 'errorCode:' . $this->_modelPayment->errCode;
+            }
+
+            return false;
 
             if ($type == 1) {
                 $form = AliPay::form($payItem);
@@ -99,5 +143,15 @@ class Payment extends MicroController
             if ($reVal === true)
                 $this->_modelPayment->updatePayment($data); //更新支付状态
         }
+    }
+
+    /**
+     * 模拟通知接口页面
+     */
+    public function notify()
+    {
+        $token = $this->input->get('token');
+        $data['amount'] = base64_decode($token);
+        CView::show('payment/notify', $data);
     }
 }

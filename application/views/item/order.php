@@ -64,7 +64,10 @@
             var orderId = $('input[name=orderId]').val();
             //支付订单
             $('#btnSupport').click(function () {
-                var url = siteUrl + '/payment';
+                var url = siteUrl + '/payment/submit?orderId=' + orderId;
+                location.href = url;
+                return false;
+                
                 $.get(url, {'orderId': orderId}, function (rep) {
                     if (rep.code == 0) {
                         var href = siteUrl + '/comment/message?orderId=' + orderId + '&payId=' + rep.data.payId;
