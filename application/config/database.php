@@ -113,7 +113,7 @@ $db['default'] = array(
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => 'sqlite:' . APPPATH . 'data/microV1.db',
+    'hostname' => 'sqlite:' . APPPATH . 'data/microV2.db',
     'username' => '',
     'password' => '',
     'database' => '',
