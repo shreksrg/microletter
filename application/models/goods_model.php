@@ -7,9 +7,9 @@ class Goods_model extends CI_Model
         parent::__construct();
     }
 
-    public function  genItemGoods($itemId)
+    public function  genGoods($itemId)
     {
-        $sql = "select * from  mic_item_goods where isdel=0 and item_id=$itemId";
+        $sql = "select * from  mic_goods where isdel=0 and item_id=$itemId";
         return $this->db->query($sql);
     }
 

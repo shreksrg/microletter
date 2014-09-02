@@ -25,4 +25,10 @@
 </div>
 </body>
 
+<script>
+    $('.retry').click(function () {
+        location.href = '<?=SITE_URL?>';
+    })
+</script>
+
 </html>
