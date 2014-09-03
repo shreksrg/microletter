@@ -80,7 +80,8 @@
                         if (rep.code == 0) {
                             location.href = $('#btnCancel').attr('href');
                         } else {
-                            alert('新增商品失败');
+                            alert(rep.message);
+                           // alert('新增商品失败');
                         }
                     }, 'json')
                 }

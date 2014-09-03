@@ -52,40 +52,34 @@
             }
         },
         {
-            text: 'Edit',
+            text: '编辑商品',
             iconCls: 'icon-edit',
             handler: function () {
-                alert('edit')
+                editGoods();
             }
         },
         {
-            text: 'Cut',
+            text: '删除商品',
             iconCls: 'icon-cut',
             handler: function () {
-                alert('cut')
-            }
-        },
-        '-',
-        {
-            text: 'Save',
-            iconCls: 'icon-save',
-            handler: function () {
-                alert('save')
+                deleteGoods()
             }
         }
+
     ];
 </script>
 <script type="text/javascript">
+    var _micro_dataGrid, _micro_pager;
     $(function () {
         //动态加载数据
         // $('#dg').datagrid()
 
-        var _micro_dataGrid = $('#dg').datagrid({
+        _micro_dataGrid = $('#dg').datagrid({
             'url': '<?=SITE_URL?>/admin/goodsman/goods',
             'pagination': true
         })
 
-        var _micro_pager = _micro_dataGrid.datagrid('getPager');
+        _micro_pager = _micro_dataGrid.datagrid('getPager');
 
         _micro_pager.pagination({
             showPageList: true,
@@ -95,6 +89,43 @@
         //  var pager = _micro_dataGrid.datagrid('getPager');    // get the pager of datagrid
 
     })
+
+    //编辑商品
+    function editGoods() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            location.href = "<?=SITE_URL?>/admin/goodsman/edit?id=" + parseInt(row.id);
+        } else {
+            alert('请选择商品');
+        }
+    }
+
+    // 删除商品
+    function deleteGoods() {
+        var rows = $('#dg').datagrid('getSelections');
+        //console.log(rows);
+        var ids = [];
+        if (rows.length > 0) {
+            $.messager.confirm('删除商品', '确定删除选择的商品?', function (r) {
+                if (r) {
+                    for (var i = 0 in rows) {
+                        ids[i] = rows[i]['id'];
+                    }
+                    $.post('<?=SITE_URL?>/admin/goodsman/drop', {'id': ids}, function (rep) {
+                        if (rep.code == 0) {
+                            // _micro_pager.pagination('refresh');
+                            $('#dg').datagrid('reload')
+                        } else {
+                            alert('删除失败')
+                        }
+                    }, 'json')
+
+                }
+            });
+        } else {
+            alert('请选择商品');
+        }
+    }
 </script>
 </body>
 </html>
