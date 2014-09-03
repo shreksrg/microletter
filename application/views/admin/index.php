@@ -20,7 +20,7 @@
         <li><a class="btnNav" href="<?= SITE_URL ?>/admin/itemman">项目管理</a></li>
         <li><a href="">订单管理</a></li>
         <li><a href="">退单管理</a></li>
-        <li><a href="">用户管理</a></li>
+        <li><a class="btnNav" href="<?= SITE_URL ?>/admin/userman">用户管理</a></li>
     </ul>
 </div>
 <div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">上海明康汇 copyright
