@@ -16,8 +16,8 @@
 <div data-options="region:'west',split:true,title:'West'" style="width:150px;padding:10px;">
 
     <ul>
-        <li><a id="btnGoodsMan" href="<?= SITE_URL ?>/admin/goodsman">商品管理</a></li>
-        <li><a href="">项目管理</a></li>
+        <li><a class="btnNav" href="<?= SITE_URL ?>/admin/goodsman">商品管理</a></li>
+        <li><a class="btnNav" href="<?= SITE_URL ?>/admin/itemman">项目管理</a></li>
         <li><a href="">订单管理</a></li>
         <li><a href="">退单管理</a></li>
         <li><a href="">用户管理</a></li>
@@ -31,7 +31,7 @@
 </div>
 </body>
 <script>
-    $('#btnGoodsMan').click(function () {
+    $('.btnNav').click(function () {
         $('iframe').attr('src', $(this).attr('href'));
         return false;
     })
