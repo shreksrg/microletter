@@ -27,15 +27,12 @@
     2014~2015
 </div>
 <div id="mainArea" data-options="region:'center'">
-
-
+    <iframe src="" frameborder="0" width="100%" height="100%"></iframe>
 </div>
 </body>
 <script>
     $('#btnGoodsMan').click(function () {
-        $.get($(this).attr('href'), null, function (rep) {
-            $('#mainArea').html(rep);
-        })
+        $('iframe').attr('src', $(this).attr('href'));
         return false;
     })
 </script>

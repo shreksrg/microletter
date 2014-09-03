@@ -10,6 +10,7 @@ class AdminController extends CI_Controller
         parent::__construct();
         micro::openSession();
         $this->_init();
+        defined('REQUEST_METHOD') or define('REQUEST_METHOD', $this->input->server('REQUEST_METHOD'));
     }
 
     protected function _init()
