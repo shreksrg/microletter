@@ -113,6 +113,7 @@ class Order_model extends CI_Model
             'user_id' => $userId,
             'sn' => $sn,
             'item_id' => $itemObj->id,
+            'quota' => $itemObj->row->quota,
             'gross' => $itemObj->row->gross,
             'expire' => $expire,
             'message' => $itemObj['message'],

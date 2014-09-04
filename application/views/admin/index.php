@@ -18,8 +18,8 @@
     <ul>
         <li><a class="btnNav" href="<?= SITE_URL ?>/admin/goodsman">商品管理</a></li>
         <li><a class="btnNav" href="<?= SITE_URL ?>/admin/itemman">项目管理</a></li>
-        <li><a href="">订单管理</a></li>
-        <li><a href="">退单管理</a></li>
+        <li><a class="btnNav" href="<?= SITE_URL ?>/admin/orderman">订单管理</a></li>
+        <li><a class="btnNav" href="<?= SITE_URL ?>/admin/payman/refund?r=index">退单管理</a></li>
         <li><a class="btnNav" href="<?= SITE_URL ?>/admin/userman">用户管理</a></li>
     </ul>
 </div>

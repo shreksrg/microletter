@@ -89,7 +89,7 @@ class Payment extends MicroController
             }
 
             //支付费用
-            $data['amount'] = ($orderRow->gross / $orderObj->item->row->quota); // 支付金额
+            $data['amount'] = ($orderRow->gross / $orderRow->quota); // 支付金额
             //产品信息
             $data['goods'] = $modItem->getGoodsRecs($orderObj->item->row->id)->row_array();
             // 订单信息
@@ -106,7 +106,6 @@ class Payment extends MicroController
             if ($payItem !== false) {
                 $token = base64_encode($payItem['amount']);
                 header('location:' . SITE_URL . '/payment/notify?token=' . $token);
-                // CView::show('payment/notify', array('amount' => $payItem['amount']));
             } else {
                 echo 'errorCode:' . $this->_modelPayment->errCode;
             }

@@ -5,6 +5,10 @@ class Run extends MicroController
 
     public function index()
     {
+        $n = 2;
+        echo $n % 5;
+
+        return false;
         phpinfo();
         return false;
 
