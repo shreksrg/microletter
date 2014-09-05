@@ -134,6 +134,32 @@ class Order_model extends CI_Model
     }
 
     /**
+     * 新增订单项目
+     */
+    public function newOrderItem($orderId, $itemRow)
+    {
+        $newId = 0;
+        $row = (array)$itemRow;
+        $value = array(
+            'order_id' => $orderId,
+            'item_id' => $row['id'],
+            'title' => $row['title'],
+            'gross' => $row['gross'],
+            'period' => $row['period'],
+            'quota' => $row['quota'],
+            'period' => $row['period'],
+            'grade_name' => $row['grade_name'],
+            'desc' => $row['desc'],
+            'add_time' => time(),
+        );
+        $return = $this->db->insert('mic_order_items', $value);
+        if ($return === true) {
+            $newId = $this->db->insert_id();
+        }
+        return $newId;
+    }
+
+    /**
      * 新增筹资项目订单商品
      */
     public function newOrderGoods($orderId, $itemObj)
@@ -424,4 +450,6 @@ class Order_model extends CI_Model
         }
         return $state;
     }
+
+
 }
