@@ -1,4 +1,5 @@
 <?php
+Micro::import('application.libraries.payment.*');
 
 class Payment extends MicroController
 {
@@ -112,9 +113,10 @@ class Payment extends MicroController
 
             return false;
 
-            if ($type == 1) {
-                $form = AliPay::form($payItem);
-                CView::show('payment/formAliPay', $form);
+            //支付宝支付
+            if ($type == 2) {
+                // $form = AliPay::form($payItem);
+                CView::show('payment/formAliPay', array('order' => $payItem));
                 return false;
             }
 

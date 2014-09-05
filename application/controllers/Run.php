@@ -5,6 +5,8 @@ class Run extends MicroController
 
     public function index()
     {
+        echo getcwd();
+        return false;
         $n = 2;
         echo $n % 5;
 

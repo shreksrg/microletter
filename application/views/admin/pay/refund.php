@@ -24,7 +24,7 @@
             <th data-options="field:'out_sn',width:180,align:'left'">交易单号</th>
             <th data-options="field:'amount',width:60,align:'center'">退款金额</th>
             <th data-options="field:'type',width:80,align:'center'">退款方式</th>
-            <th data-options="field:'pay_time',width:120,align:'left'">支付日期</th>
+            <th data-options="field:'pay_time',width:120,align:'left'" >支付日期</th>
             <th data-options="field:'refund_time',width:120,align:'left'">退款日期</th>
         </tr>
         </thead>
@@ -39,7 +39,7 @@
                 退款单号: <input class="easyui-numberbox" name="refund_sn" size="48" value="">
                 支付单号: <input class="easyui-numberbox" name="pay_sn" size="48" value="">
                 退款金额: <input class="easyui-numberbox" name="min_amount"> ~ <input class="easyui-numberbox"
-                                                                                 name="max_amount">
+                                                                                  name="max_amount">
                 退款状态: <select class="easyui-combobox" name="status" panelHeight="auto" style="width:100px">
                     <option value="">全部</option>
                     <option value="0">未退款</option>
@@ -69,6 +69,8 @@
 
 
 <script>
+
+
     function formatStatus(val, row) {
         var txt = 'on';
         if (val <= 0) {

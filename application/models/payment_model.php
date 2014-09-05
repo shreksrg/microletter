@@ -24,27 +24,22 @@ class Payment_model extends CI_Model
         $modelOrder = CModel::make('order_model');
         $orderObj = $modelOrder->genOrder($orderId);
 
-        if (($orderRow = $orderObj->row)) {
-            $itemId = $orderRow->item_id;
-            $modItem = CModel::make('planItem_model');
-            $orderObj->item = $modItem->genItem($itemId); //订单项目
-            if (!$orderObj->item->row) {
-                $this->setErrCode(1002); //订单项目无效
-                return false;
-            }
-        } else {
-            $this->setErrCode(1001);
-            return false;
-        }
-
-        $state = $modelOrder->getOrderState($orderObj);
+        //订单状态
+        $state = $modelOrder->getState($orderObj);
         if ($state != 'on') {
             $this->setErrCode(1003); //订单过期或已经完成
             return false;
         }
 
+        $orderRow = $orderObj->row;
+
+        // 获取订单商品
+        $sql = "select title from mic_order_goods where isdel=0 order_id=$orderId limit 1";
+        $query = $this->db->query($sql);
+        $pay_title = ($row = $query->row()) ? $row->title : '';
+
         //获取项目订单
-        $amount = ($orderRow->gross / $orderObj->item->row->quota); // 支付金额
+        $amount = ($orderRow->gross / $orderRow->quota); // 支付金额
 
         //产生支付项id
         $paySn = UUID::fast_uuid(4);
@@ -61,6 +56,7 @@ class Payment_model extends CI_Model
         $reBoolean = $this->db->insert('mic_payment_item', $value);
         if ($reBoolean === true) {
             $value['pay_id'] = $this->db->insert_id();
+            $value['pay_title'] = $pay_title;
             return $value;
         }
         return false;

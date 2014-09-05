@@ -2,6 +2,9 @@
  * Copyright (c) 2014 hailiang All rights reserved. by Jackal
  ------------------------------------------------------------------------*/
 var _namespace_micro = {}
+
+
+
 $(function () {
 
     $(".indexbg").click(function () {
