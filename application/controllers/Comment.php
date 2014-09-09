@@ -116,11 +116,10 @@ class Comment extends MicroController
                 header('location:' . SITE_URL . '/item');
                 exit;
             }
-
             $modItem = CModel::make('planItem_model');
             $planItem = $modItem->genItem($order->row->item_id);
             $data['quota'] = $planItem->row->quota; //限定支付总人数
-            $data['supports'] = $modOrder->getSupports($orderId); //支付人数
+            $data['supports'] = $order->row->paids; //支付人数
             $args = array('orderId' => $orderId, 'type' => $type, 'page' => 1, 'offset' => 10);
             $data['orderId'] = $orderId;
             $data['type'] = $type;

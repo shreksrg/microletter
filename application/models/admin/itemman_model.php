@@ -91,22 +91,6 @@ class ItemMan_model extends CI_Model
         return false;
     }
 
-    public function newItemGoods($data)
-    {
-        $value = array(
-            'item_id' => $data['itemId'],
-            'goods_id' => $data['goods_id'],
-            'title' => $data['goods_title'],
-            'price' => $data['goods_price'],
-            'img' => $data['goods_img'],
-            'price' => $data['goods_price'],
-            'origin' => $data['goods_source'],
-            'desc' => $data['goods_desc'],
-            'add_time' => time(),
-        );
-        $reVal = $this->db->insert('mic_item_goods', $value);
-        return $reVal;
-    }
 
     /**
      * 编辑项目
@@ -133,12 +117,12 @@ class ItemMan_model extends CI_Model
     }
 
     /**
-     * 编辑项目商品
+     * 新增项目商品
      */
-    public function editItemGoods($data)
+    public function newItemGoods($data)
     {
         $value = array(
-            'item_id' => (int)$data['item_id'],
+            'item_id' => (int)$data['itemId'],
             'goods_id' => (int)$data['goods_id'],
             'title' => $data['goods_title'],
             'price' => $data['goods_price'],
@@ -146,9 +130,21 @@ class ItemMan_model extends CI_Model
             'price' => $data['goods_price'],
             'origin' => $data['goods_source'],
             'desc' => $data['goods_desc'],
-            'update_time' => time(),
+            'add_time' => time(),
         );
-        $reVal = $this->db->update('mic_item_goods', $value, array('isdel' => 0, 'item_id' => $value['item_id'], 'goods_id' => $value['goods_id']));
+        $reVal = $this->db->insert('mic_item_goods', $value);
+        return $reVal;
+    }
+
+    /**
+     * 编辑项目商品
+     */
+    public function editItemGoods($data)
+    {
+        $data['itemId'] = $data['item_id'];
+        // $reVal = $this->db->update('mic_item_goods', $value, array('isdel' => 0, 'item_id' => $value['item_id'], 'goods_id' => $value['goods_id']));
+        $this->db->delete('mic_item_goods', array('item_id' => $data['item_id'], 'goods_id' => $data['goods_id']));
+        $reVal = $this->newItemGoods($data);
         return $reVal;
     }
 

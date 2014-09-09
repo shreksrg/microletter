@@ -8,6 +8,7 @@ class MicroController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        defined('REQUEST_METHOD') or define('REQUEST_METHOD', $this->input->server('REQUEST_METHOD'));
         micro::openSession();
         $this->_init();
     }

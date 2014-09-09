@@ -24,6 +24,27 @@ class ItemOrder extends CCApplication
         return $this->_orderId;
     }
 
+    /**
+     * 订单状态
+     */
+    public function getState()
+    {
+        $state = 'none';
+        if (($orderRow = $this->row) && $orderRow->status > 0) {
+            $diff = $orderRow->expire - time();
+            $lacks = $orderRow->quota - $orderRow->paids;
+            if ($diff > 0 && $lacks > 0) { // 订单进行中
+                $state = 'on';
+            } elseif ($diff <= 0 && $lacks > 0) { //订单结束（失败）
+                $state = 'fail';
+            } else {
+                $state = 'achieve'; //订单完成（成功）
+            }
+        }
+        return $state;
+    }
+
+
     public function setRecordSet($query)
     {
         $this->_recordSet = $query;

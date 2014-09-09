@@ -13,7 +13,6 @@ class Utils
         $diffMinutes = ($diffHours - $time['leftHours']) * 60;
         $time['leftMinutes'] = intval($diffMinutes); //剩余分钟
         $time['leftSeconds'] = ceil(($diffMinutes - $time['leftMinutes']) * 60); //剩余秒数
-
         return $time;
     }
 
@@ -62,5 +61,18 @@ class Utils
                 break;
             }
         }
+    }
+
+    /**
+     * 格式化剩余时间标签
+     */
+    static public function formatLTimeLabel(Array $leftTime)
+    {
+        $time = $leftTime;
+        $days = $time['leftDays'] > 0 ? $time['leftDays'] . '天' : '';
+        $hours = $time['leftHours'] > 0 ? $time['leftHours'] . '小时' : '';
+        $minutes = $time['leftMinutes'] > 0 ? $time['leftMinutes'] . '分' : '';
+        $seconds = $time['leftSeconds'] > 0 ? $time['leftSeconds'] . '秒' : '';
+        return $days . $hours . $minutes . $seconds;
     }
 }

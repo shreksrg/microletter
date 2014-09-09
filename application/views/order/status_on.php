@@ -22,44 +22,40 @@
 
 <div class="page show">
     <?php
-    $order = $info['order'];
-    $orderRow = (array)$order->row;
-    $orderId = $orderRow['id'];
 
-    // $consignee = $info['consignee'];
+    ///////////////////////////////////////////////////////
 
-    $item = $info['item'];
-    $itemRow = (array)$item->row;
+    $order = (array)$info['order'];
+    $item = (array)$info['item'];
+    $goods = (array)$info['goods'];
 
-    $goodsRow = $info['goods'];
+    $orderId = $order['id'];
+    $time = Utils::getDiffTime(time(), $order['expire']);
+    $leftTime = Utils::formatLTimeLabel($time);
 
-    $abandon = $info['abandon'];
-    $supports = $info['supportNum'];
-    $lacks = $info['quota'] - $supports;
-    $leftTime = $info['leftTime'];
-
-    //$goodsImg = SERVER_NAME . $goodsRow['img'];
-    $message = $orderRow['message'];
+    $expire = date('m月d日 H:i', $order['expire']);
+    $supports = $order['paids'];
+    $lacks = $order['quota'] - $supports;
 
     ?>
     <header>
-        <h4>你的朋友 <?= $Originator ?> 发起了节操测试：</h4>
+        <h4> [<?=$fullName?>] 发起了节操测试：</h4>
 
-        <h3><?= $orderRow['message'] ?></h3>
+        <h3><?= $order['message'] ?></h3>
     </header>
 
     <div class="tableview">
         <section class="status1 fix">
-            <img class="pic" src="<?= $goodsRow['img'] ?>"/>
+            <img class="pic" src="<?= $goods['img'] ?>"/>
 
-            <h2>[<?= $goodsRow['origin'] ?>] <?= $goodsRow['title'] ?></h2>
+            <h2>[<?= $goods['origin'] ?>] <?= $goods['title'] ?></h2>
 
-            <div>总价：<span class="price"><?= sprintf('%.2f', $goodsRow['gross']) ?></span>元</div>
-            <div>元筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
+            <div>总价：<span class="price"><?= sprintf('%.2f', $order['gross']) ?></span>元</div>
+            <div>筹集方式：<span class="collect"><?= $item['title'] ?></span></div>
         </section>
     </div>
     <div class="statustitle fix">
-        已有 <span><?= $supports ?></span>
+        已有 <span><?= $order['paids'] ?></span>
         位朋友给予了我支持，距离成功达成目标还差<span> <?= $lacks ?> </span>人！<br/>筹集截止时间：<span><?= $leftTime ?></span>
     </div>
     <div class="line_box">

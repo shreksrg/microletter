@@ -61,6 +61,8 @@ class ItemMan extends AdminController
             /*$validator = $this->validateForm();
             if ($validator->run() == false)
                 CAjax::show('1000', '表单输入值不合法,请检查');*/
+
+            
             $reVal = $this->_modelItem->editItem($data);
             $repArr = array('0', 'successful');
             if ($reVal !== true) $repArr = array('1001', 'fail');

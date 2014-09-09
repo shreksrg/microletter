@@ -75,7 +75,7 @@
                                                                                  value="从商品库中选择"/></div>
 
                     <table cellpadding="5">
-                        <input type="hidden" name="goods_id" value="0"/>
+                        <input type="hidden" name="goods_id" value="<?=$goods['goods_id']?>"/>
                         <tr>
                             <td>标题:</td>
                             <td><input class="easyui-textbox" type="text" size="100" name="goods_title"
@@ -108,7 +108,7 @@
                             <td>描述:</td>
                             <td><input class="easyui-textbox" name="goods_desc"
                                        data-options="multiline:true,required:true"
-                                       style="width: 320px;height:120px" value="<?=$goods['desc']?>"></td>
+                                       style="width: 320px;height:120px" value='<?=$goods['desc']?>'></td>
                         </tr>
 
                     </table>

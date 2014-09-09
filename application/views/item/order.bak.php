@@ -20,34 +20,32 @@
 <body>
 <div class="page show">
     <?php
+    $orderObj = $info['order'];
+    $orderRow = (array)$orderObj->row;
+    $goodsRow = $info['goods'];
+    $itemObj = $info['item'];
+    $itemRow = (array)$itemObj->row;
 
-    $user = (array)$user;
-    $order = (array)$info['order'];
-    $item = (array)$info['item'];
-    $goods = (array)$info['goods'];
-
-    $orderId = $order['id'];
-    $time = Utils::getDiffTime(time(), $order['expire']);
-    $leftTime = Utils::formatLTimeLabel($time);
-
-    $expire = date('m月d日 H:i', $order['expire']);
-    $lacks = $order['quota'] - $order['paids'];
+    $orderId = $orderRow['id'];
+    $leftTime = $info['leftTime'];
+    $expire = date('m月d日 h:i', $orderRow['expire']);
+    $lacks = $info['quota'] - $info['supportNum'];
 
     ?>
     <header>
-        <h4>你的朋友 <?= $user['fullname'] ?> 发起了节操测试：</h4>
+        <h4>你的朋友 <?= $Originator ?> 发起了节操测试：</h4>
 
-        <h3><?= $order['message'] ?></h3>
+        <h3><?= $orderRow['message'] ?></h3>
     </header>
 
     <div class="tableview">
         <section class="status1 fix">
-            <img class="pic" src="<?= $goods['img'] ?>"/>
+            <img class="pic" src="<?= $goodsRow['img'] ?>"/>
 
-            <h2>[<?= $goods['origin'] ?>] <?= $goods['title'] ?></h2>
+            <h2>[<?= $goodsRow['origin'] ?>] <?= $goodsRow['title'] ?></h2>
 
-            <div>总价：<span class="price"><?= sprintf('%.2f', $order['gross']) ?></span>元</div>
-            <div>元筹集方式：<span class="collect"><?= $item['title'] ?></span></div>
+            <div>总价：<span class="price"><?= sprintf('%.2f', $goodsRow['price']) ?></span>元</div>
+            <div>元筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
         </section>
     </div>
     <?php
@@ -69,7 +67,7 @@
                 var url = siteUrl + '/payment/submit?orderId=' + orderId;
                 location.href = url;
                 return false;
-
+                
                 $.get(url, {'orderId': orderId}, function (rep) {
                     if (rep.code == 0) {
                         var href = siteUrl + '/comment/message?orderId=' + orderId + '&payId=' + rep.data.payId;
@@ -95,7 +93,7 @@
     if ($state == 'achieve') {
         ?>
         <!--测试进成功 start-->
-        <div class="time">该项挑战已于 <span><?= date('Y年m月d日',$order['achieve_time']) ?></span> 结束</div>
+        <div class="time">该项挑战已于 <span><?= $expire ?></span> 结束</div>
         <div class="status_win"></div>
         <!--over-->
     <?php } ?>

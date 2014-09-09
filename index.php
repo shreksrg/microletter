@@ -24,7 +24,7 @@
  * @since        Version 1.0
  * @filesource
  */
-
+date_default_timezone_set('PRC');
 define('ROOT', dirname(__FILE__));
 define('SERVER_NAME', $_SERVER['SERVER_NAME']);
 define('SITE_URL', 'http://' . SERVER_NAME);

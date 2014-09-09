@@ -29,9 +29,9 @@
             <img src="<?= $goodsRow['img'] ?>.cover.jpg"/>
         </div>
         <div class="itemdetail_text">
-            <h2>【<?= $goodsRow['origin'] ?>】 <?= $goodsRow['title'] ?></h2>
+            <h2>【<?=Matcher::matchOrigin($goodsRow['origin']) ?>】 <?= $goodsRow['title'] ?></h2>
 
-            <div>总价：<span class="price"><?= sprintf('%.2f', $goodsRow['gross']) ?></span> 元</div>
+            <div>总价：<span class="price"><?= sprintf('%.2f', $itemRow['gross']) ?></span> 元</div>
             <div>筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
             <a id="itemId" href="<?= SITE_URL ?>/order/apply"></a>
         </div>

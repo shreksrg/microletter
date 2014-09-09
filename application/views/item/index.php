@@ -23,20 +23,19 @@
     <div class="tableview">
         <?php
         if ($list) {
-            foreach ($list as $itemId => $planItem) {
-                $itemRow = (array)$planItem->row;
-                $goodsRows = $planItem->goods->rows;
-                $goodsRow = $goodsRows ? (array)$goodsRows[0] : null;
-
+            foreach ($list as $itemId => $itemObj) {
+                $item = (array)$itemObj->row;
+                $goods = (array)$itemObj->goods->row;
+                if (!$goods) $goods = null;
                 ?>
                 <a href="<?= SITE_URL ?>/item/detail?id=<?= $itemId ?>">
-                    <section class="status<?= $itemRow['grade'] ?>">
-                        <img class="pic" src="<?= $goodsRow['img'] ?>"/>
+                    <section class="status<?= $item['grade'] ?>">
+                        <img class="pic" src="<?= $goods['img'] ?>"/>
 
-                        <h2>【<?= $goodsRow['origin'] ?>】<?= $goodsRow['title'] ?></h2>
+                        <h2>【<?= Matcher::matchOrigin($goods['origin']) ?>】<?= $goods['title'] ?></h2>
 
-                        <div>总价：<span class="price">  <?= sprintf('%.2f', $goodsRow['gross']) ?></span>元</div>
-                        <div>元筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
+                        <div>总价：<span class="price">  <?= sprintf('%.2f', $item['gross']) ?></span>元</div>
+                        <div>筹集方式：<span class="collect"><?= $item['title'] ?></span></div>
                     </section>
                 </a>
             <?php

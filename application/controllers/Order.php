@@ -15,7 +15,7 @@ class Order extends MicroController
 
     public function _authentication()
     {
-        $filter = array('apply','confirm');
+        $filter = array('apply', 'confirm');
         $controller = $this->uri->rsegment(1);
         $method = $this->uri->rsegment(2);
         $url = $controller . '/' . $method;
@@ -50,7 +50,7 @@ class Order extends MicroController
             //验证手机是否已经注册
             $modelValidate = CModel::make('validate_model');
             $reVal = $modelValidate->chkUserByMobile($form['mobile']);
-            if ($reVal===true) {
+            if ($reVal === true) {
                 CAjax::show(1099, '手机号已经注册');
                 exit;
             }
@@ -75,7 +75,6 @@ class Order extends MicroController
 
             return false;
         }
-
     }
 
     /**
@@ -83,11 +82,16 @@ class Order extends MicroController
      */
     public function confirm()
     {
-        $orderId = $this->input->get('orderId', true);
-        $data['info'] = $this->_modelOrder->getOrderInfo($orderId);
-        $data['consignee'] = $this->_modelOrder->getShipInfo($orderId);
-
-        CView::show('order/confirm', $data);
+        $orderId = (int)$this->input->get('orderId', true);
+        $orderObj = $this->_modelOrder->genOrder($orderId);
+        $data['state'] = $this->_modelOrder->getState($orderObj);
+        if ($data['state'] == 'on') {
+            $data['info'] = $this->_modelOrder->getDetail($orderObj);
+            $data['consignee'] = $this->_modelOrder->getShipInfo($orderId);
+            CView::show('order/confirm', $data);
+        } else {
+            CView::show('message/error', array('code' => $data['state'], 'content' => '挑战已过期！'));
+        }
     }
 
     /**
@@ -95,11 +99,18 @@ class Order extends MicroController
      */
     public function status()
     {
-        $data = $this->_modelOrder->getStatus($this->_user);
-        $state = $data['state'];
-        if ($state == 'none') {
-            echo '您尚未发起挑战,<a href="' . SITE_URL . '/item">去发起挑战</a>';
-        } else CView::show('order/status_' . $state, $data);
-
+        $orderObj = $this->_modelOrder->getOrderByUId($this->_user->id);
+        if ($orderObj) {
+            $data['state'] = $state = $this->_modelOrder->getState($orderObj);
+            if ($state != 'none') {
+                $modelComment = CModel::make('comment_model');
+                $data['abandon'] = $modelComment->getCount(array('payId' => 0, 'type' => 0, 'orderId' => $orderObj->row->id));
+                $data['info'] = $this->_modelOrder->getDetail($orderObj);
+                $data['fullName']=$this->_user->info->fullname;
+                CView::show('order/status_' . $state, $data);
+                return true;
+            }
+        }
+        CView::show('message/error', array('code' => $state, 'content' => '您还未发起挑战！'));
     }
 }

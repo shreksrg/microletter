@@ -21,22 +21,19 @@
 <div class="page show">
     <?php
 
-    $order = $info['order'];
-    $orderRow = (array)$order->row;
-    $orderId = $orderRow['id'];
+    $order = (array)$info['order'];
+    $item = (array)$info['item'];
+    $goods = (array)$info['goods'];
 
-    $item = $info['item'];
-    $itemRow = (array)$item->row;
+    $orderId = $order['id'];
 
-    $goodsRow = $info['goods'];
-
-    $supports = $info['supportNum'];
-    $lacks = $info['quota'] - $supports;
-    $leftTime = $info['leftTime']
+    $expire = date('m月d日 H:i', $order['expire']);
+    $supports = $order['paids'];
+    $lacks = $order['quota'] - $supports;
 
     ?>
     <div class="failtitle">
-        我的人品稀烂！<br/>只有<?= $supports ?>位朋友给予了我支持，距离成功达成 <br/><span><?= $itemRow['grade_name'] ?></span>目标还差
+        我的人品稀烂！<br/>只有<?= $supports ?>位朋友给予了我支持，距离成功达成 <br/><span><?= $item['grade_name'] ?></span>目标还差
         <span><?= $lacks ?></span> 人！
     </div>
 

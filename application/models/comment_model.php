@@ -64,5 +64,10 @@ class Comment_model extends CI_Model
         return $comments;
     }
 
-
+    public function getCount($args)
+    {
+        $sql = "select count(*) as num from mic_comment where isdel=0 and pay_id=? and type=? and order_id=?";
+        $query = $this->db->query($sql, array($args['payId'], $args['type'], $args['orderId']));
+        return (int)$query->row()->num; //放弃人数
+    }
 }

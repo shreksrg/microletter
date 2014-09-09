@@ -60,33 +60,17 @@ class Item extends MicroController
      */
     public function Order()
     {
-        $data = array();
-        $orderId = (int)$this->input->get('id');
-        $modOrder = CModel::make('order_model');
-        $data['info'] = $info = $modOrder->getOrderInfo($orderId);
-
-        if ($info) {
-            $orderObj = $info['order'];
-            $itemObj = $info['item'];
-            $orderRow = $orderObj->row;
-            $orderStatus = $orderRow->status;
-            $diffTime = $orderRow->expire - time();
-
-            $data['state'] = $modOrder->getOrderState($orderObj, $itemObj);
-
-            if ($orderStatus <= 0) {
-                $data['state'] = 'close';
-                echo '项目已关闭';
-                return false;
-            }
-            //$data['consignee'] = $modOrder->getShipInfo($orderId); //收件人信息
-            $modelLogin = CModel::make('login_model');
-            $userRow = $modelLogin->getUserById($orderRow->user_id);
-            $data['Originator'] = $userRow->fullname;
-            //$data['consignee'] = $modOrder->getShipInfo($orderId); //收件人信息
+        $modelOrder = CModel::make('order_model');
+        $orderId = (int)$this->input->get('id', true);
+        $orderObj = $modelOrder->genOrder($orderId);
+        $data['state'] = $modelOrder->getState($orderObj);
+        if ($data['state'] != 'none') {
+            $data['info'] = $modelOrder->getDetail($orderObj);
+            $modelUser = CModel::make('user_model');
+            $data['user'] = $modelUser->getRowById($orderObj->row->user_id);
             CView::show('item/order', $data);
         } else {
-            header('location:' . SITE_URL . '/item');
+            CView::show('message/error', array('code' => $data['state'], 'content' => '该挑战不存在！'));
         }
     }
 }

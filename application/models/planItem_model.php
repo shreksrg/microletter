@@ -8,18 +8,19 @@ class planItem_model extends CI_Model
     /**
      * 获取项目列表
      */
-    public function getList($page, $offset = 10)
+    public function getList($page, $offset = 20)
     {
         $page = (int)$page;
         if ($page <= 0) $page = 1;
         $start = $page - 1;
         $list = array();
-        $query = $this->db->query("select * from mic_item where isdel=0 and status=1 limit $start,$offset");
-        if ($query->num_rows() > 0) {
-            foreach ($query->result_array() as $row) {
-                $itemId = $row['id'];
-                $planItem = new PlanItem($itemId, $query);
-                $planItem->goods->rows = $this->getGoodsRecs($itemId)->result_array();
+        $query = $this->db->query("select * from mic_item where isdel=0 and status>0 order by add_time desc limit $start,$offset");
+        if ($query->row()) {
+            foreach ($query->result() as $row) {
+                $itemId = $row->id;
+                $planItem = new PlanItem($itemId);
+                $planItem->row = $row;
+                $planItem->goods->row = $this->getGoodsRow($itemId);
                 $list[$itemId] = $planItem;
             }
         }
@@ -32,8 +33,7 @@ class planItem_model extends CI_Model
     public function getDetail($itemId)
     {
         $item = $this->genItem($itemId);
-        if ($item->row)
-            $item->goods->row = $this->getGoodsRecs($itemId)->row_array();
+        $item->goods->row = $this->getGoodsRow($itemId);
         return $item;
     }
 
@@ -43,17 +43,21 @@ class planItem_model extends CI_Model
      */
     public function genItem($id)
     {
-        $query = $this->db->query("select * from mic_item where isdel=0 and status=1 and id=$id limit 1");
+        $query = $this->db->query("select * from mic_item where isdel=0 and id=$id limit 1");
         return $this->_items[$id] = new PlanItem($id, $query);
     }
 
     /**
      * 获取项目商品数据集
      */
-    public function getGoodsRecs($itemId)
+    public function getGoodsRow($itemId)
     {
-        $sql = "select * from  mic_item_goods where isdel=0 and item_id=$itemId";
-        return $this->db->query($sql);
+        $row = null;
+        $modelGoods = CModel::make('goods_model');
+        $rows = $modelGoods->getItemGoodsRows($itemId);
+        if ($rows)
+            $row = $rows[0];
+        return $row;
     }
 
     /**
@@ -73,5 +77,14 @@ class planItem_model extends CI_Model
             }
         }
         return $gross;
+    }
+
+    public function orderItemRows($orderId, $limit = 0)
+    {
+        $limit = (int)$limit;
+        $rows = null;
+        $sql = "SELECT * FROM mic_order_item where isdel=0 and order_id=$orderId";
+        $query = $this->db->query($sql);
+        return $limit > 0 ? $query->result() : $query->row();
     }
 }

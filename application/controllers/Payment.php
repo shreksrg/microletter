@@ -11,11 +11,42 @@ class Payment extends MicroController
         $this->_modelPayment = CModel::make('payment_model');
     }
 
-    /**
-     * 生成支付项订单
-     */
+
     public function index()
     {
+        if (REQUEST_METHOD == 'GET') {
+            //生成支付确认页
+            $orderId = (int)$this->input->get('orderId');
+            $modelOrder = CModel::make('order_model');
+            $orderObj = $modelOrder->genOrder($orderId);
+            $state = $orderObj->getState();
+            if ($state == 'on') {
+                $data = array();
+                $orderRow = $orderObj->row;
+                $modelUser = CModel::make('user_model');
+                $userRow = $modelUser->getRowById($orderRow->user_id);
+                if (!$userRow) {
+                    echo "挑战人不存在";
+                    return false;
+                }
+                //发起人姓名
+                $data['originator'] = $userRow->fullname;
+                //支付费用
+                $data['amount'] = ($orderRow->gross / $orderRow->quota); // 支付金额
+                //产品信息
+                $modelGoods = CModel::make('goods_model');
+                $data['goods'] = $modelGoods->getOrderGoods($orderId);
+                // 订单信息
+                $data['order'] = $orderObj;
+
+                CView::show('payment/confirm', $data);
+            } else
+                echo '挑战已结束';
+
+        } else {
+            //保存支付订单并提交
+        }
+
         $code = 0;
         $message = 'successful';
         $orderId = (int)$this->input->get('orderId');
@@ -79,15 +110,6 @@ class Payment extends MicroController
                 return false;
             }
 
-            //发起人姓名
-            $modelLogin = CModel::make('login_model');
-            $userRow = $modelLogin->getUserById($orderRow->user_id);
-            if ($userRow) {
-                $data['originator'] = $userRow->fullname;
-            } else {
-                echo "挑战人不存在";
-                return false;
-            }
 
             //支付费用
             $data['amount'] = ($orderRow->gross / $orderRow->quota); // 支付金额

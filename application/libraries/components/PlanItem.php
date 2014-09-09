@@ -65,15 +65,5 @@ class PlanItem extends CCApplication
         return $this->_goods;
     }
 
-    /**
-     * 计算项目总金额
-     */
-    public function getGross()
-    {
-        $gross = 0;
-        if ($this->_recordSet && $this->_recordSet->row()) {
-            $this->_recordSet->row()->gross;
-        }
-        return $gross;
-    }
+
 }

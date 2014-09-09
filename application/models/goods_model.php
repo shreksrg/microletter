@@ -43,4 +43,48 @@ class Goods_model extends CI_Model
         }
         return null;
     }
+
+    /**
+     * 获取商品来源地列表
+     */
+    public function getOrigin()
+    {
+        $sql = "SELECT * FROM mic_origin where isdel=0";
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
+
+    /**
+     * 获取项目商品
+     */
+    public function getItemGoodsRows($itemId)
+    {
+        $sql = "SELECT * FROM mic_item_goods where isdel=0 and item_id=$itemId order by add_time";
+        $query = $this->db->query($sql);
+        return $query->result();
+    }
+
+    /**
+     * 获取订单商品
+     */
+    public function getOrderGoods($orderId)
+    {
+        $sql = "SELECT * FROM mic_order_goods where isdel=0 and order_id=$orderId";
+        $query = $this->db->query($sql);
+        return $query->result();
+    }
+
+    /**
+     * 获取订单商品
+     */
+    public function orderGoodsRows($orderId, $limit = 0)
+    {
+        $limit = (int)$limit;
+        $rows = null;
+        $sql = "SELECT * FROM mic_order_goods where isdel=0 and order_id=$orderId";
+        $query = $this->db->query($sql);
+        return $limit > 0 ? $query->result() : $query->row();
+    }
+
+
 }

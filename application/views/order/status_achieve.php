@@ -21,30 +21,34 @@
 <div class="page show">
     <?php
 
-    $order = $info['order'];
-    $orderId = $order->row->id;
 
-    $item = $info['item'];
-    $itemRow = (array)$item->row;
+////////////////////////////////////////////
 
-    $goodsRow = $info['goods'];
+    $order = (array)$info['order'];
+    $item = (array)$info['item'];
+    $goods = (array)$info['goods'];
 
-    $supports = $info['supportNum'];
-    $lacks = $info['quota'] - $supports;
+    $orderId = $order['id'];
+    $time = Utils::getDiffTime($order['add_time'], $order['achieve_time']);
+    $usedTime = Utils::formatLTimeLabel($time);
+
+    $expire = date('m月d日 H:i', $order['expire']);
+    $supports = $order['paids'];
+    $lacks = $order['quota'] - $supports;
 
     ?>
     <div class="successtitle">
-        我的人品还不错<br/><span><?= $useTime ?></span>就达成了<span><?= $itemRow['grade_name'] ?></span>的目标！ <br/>你敢试试吗！？
+        我的人品还不错<br/><span><?= $usedTime ?></span>就达成了<span><?= $item['grade_name'] ?></span>的目标！ <br/>你敢试试吗！？
     </div>
 
     <div class="tableview">
         <section class="status1 fix">
-            <img class="pic" src="img/item1.jpg"/>
+            <img class="pic" src="<?= $goods['img'] ?>"/>
 
-            <h2>[<?= $goodsRow['origin'] ?>] <?= $goodsRow['title'] ?></h2>
+            <h2>[<?= $goods['origin'] ?>] <?= $goods['title'] ?></h2>
 
-            <div>总价：<span class="price"><?= $goodsRow['price'] ?></span>元</div>
-            <div>元筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
+            <div>总价：<span class="price"><?= $order['gross'] ?></span>元</div>
+            <div>筹集方式：<span class="collect"><?= $item['title'] ?></span></div>
         </section>
     </div>
     <div class="delivertips">商品将于2个工作日内快递至您填写的地址</div>

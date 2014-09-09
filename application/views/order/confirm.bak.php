@@ -22,41 +22,45 @@
 <div class="page show">
     <?php
 
+
     if ($info) {
+        $orderObj = isset($info['order']) ? $info['order'] : null;
+        $orderRow = (array)$orderObj->row;
+        $orderId = $orderRow['id'];
 
-        $order = (array)$info['order'];
-        $item = (array)$info['item'];
-        $goods = (array)$info['goods'];
+        $itemObj = $info['item'];
+        $itemRow = (array)$itemObj->row;
+        $goodsRow = isset($info['goods']) ? $info['goods'] : null;
 
+        $leftTime = $info['leftTime'];
+        $expireLabel = date('m月d日 h:i', $orderRow['expire']);
+        $lacks = $info['quota'] - $info['supportNum'];
 
-        $time = Utils::getDiffTime(time(), $order['expire']);
-        $leftTime = Utils::formatLTimeLabel($time);
-
-        $expire = date('m月d日 H:i', $order['expire']);
-        $lacks = $order['quota'] - $order['paids'];
-
+        $ship = $consignee ? $consignee : null;
+        $message = $orderRow['message'];
+        // $goodsImg = SERVER_NAME . $goodsRow['img'];
         ?>
         <header>
             <h4>你即将发起一个节操测试：</h4>
 
-            <h3><?= $order['message'] ?></h3>
+            <h3><?= $orderRow['message'] ?></h3>
         </header>
 
         <div class="tableview">
             <section class="status1 fix">
-                <img class="pic" src="<?= $goods['img'] ?>"/>
+                <img class="pic" src="<?= $goodsRow['img'] ?>"/>
 
-                <h2>【<?= Matcher::matchOrigin($goods['origin']) ?>】 <?= $goods['title'] ?></h2>
+                <h2>【<?= $goodsRow['origin'] ?>】 <?= $goodsRow['title'] ?></h2>
 
-                <div>总价：<span class="price"> <?= sprintf('%.2f', $order['gross']) ?></span>元</div>
-                <div>筹集方式：<span class="collect"><?= $item['title'] ?></span></div>
+                <div>总价：<span class="price"> <?= sprintf('%.2f', $orderRow['gross']) ?></span>元</div>
+                <div>筹集方式：<span class="collect"><?= $itemRow['title'] ?></span></div>
             </section>
         </div>
-        <div class="time">筹集截止时间：<span><?= $leftTime ?></span> （<?= $expire ?>
+        <div class="time">筹集截止时间：<span><?= $leftTime ?></span> （<?= $expireLabel ?>
             ）<br/>离筹集成功还需<span> <?= $lacks ?> </span>人支持
         </div>
-        <div class="information">联系人：<?= $consignee['consignee'] ?><br/>联系电话：<?= $consignee['mobile'] ?>
-            <br/>收货地址：<?= $consignee['address'] ?><span
+        <div class="information">联系人：<?= $ship['consignee'] ?><br/>联系电话：<?= $ship['mobile'] ?>
+            <br/>收货地址：<?= $ship['address'] ?><span
                 class="tip">请确认收货地址，否则可能无法收到礼品</span></div>
         <!--<button type="button" class="share btn">点击右上方的按钮分享到朋友圈测人品</button>-->
         <div class="sharetipmask show"></div>
