@@ -79,6 +79,9 @@ class planItem_model extends CI_Model
         return $gross;
     }
 
+    /**
+     * 订单项目记录
+     */
     public function orderItemRows($orderId, $limit = 0)
     {
         $limit = (int)$limit;

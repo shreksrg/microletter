@@ -44,7 +44,7 @@
         <section class="status1 fix">
             <img class="pic" src="<?= $goods['img'] ?>"/>
 
-            <h2>[<?= $goods['origin'] ?>] <?= $goods['title'] ?></h2>
+            <h2>[<?= Matcher::matchOrigin($goods['origin']) ?>] <?= $goods['title'] ?></h2>
 
             <div>总价：<span class="price"><?= sprintf('%.2f', $order['gross']) ?></span>元</div>
             <div>元筹集方式：<span class="collect"><?= $item['title'] ?></span></div>
@@ -66,19 +66,10 @@
             var orderId = $('input[name=orderId]').val();
             //支付订单
             $('#btnSupport').click(function () {
-                var url = siteUrl + '/payment/submit?orderId=' + orderId;
+                var url = siteUrl + '/payment?orderId=' + orderId;
                 location.href = url;
                 return false;
 
-                $.get(url, {'orderId': orderId}, function (rep) {
-                    if (rep.code == 0) {
-                        var href = siteUrl + '/comment/message?orderId=' + orderId + '&payId=' + rep.data.payId;
-                        location.href = href;
-                    } else {
-                        alert(rep.message);
-                    }
-                }, 'json');
-                return false;
             })
 
             //拒绝订单
@@ -95,7 +86,7 @@
     if ($state == 'achieve') {
         ?>
         <!--测试进成功 start-->
-        <div class="time">该项挑战已于 <span><?= date('Y年m月d日',$order['achieve_time']) ?></span> 结束</div>
+        <div class="time">该项挑战已于 <span><?= date('Y年m月d日', $order['achieve_time']) ?></span> 结束</div>
         <div class="status_win"></div>
         <!--over-->
     <?php } ?>

@@ -11,170 +11,146 @@ class Payment extends MicroController
         $this->_modelPayment = CModel::make('payment_model');
     }
 
-
     public function index()
     {
         if (REQUEST_METHOD == 'GET') {
-            //生成支付确认页
-            $orderId = (int)$this->input->get('orderId');
-            $modelOrder = CModel::make('order_model');
-            $orderObj = $modelOrder->genOrder($orderId);
-            $state = $orderObj->getState();
-            if ($state == 'on') {
-                $data = array();
-                $orderRow = $orderObj->row;
-                $modelUser = CModel::make('user_model');
-                $userRow = $modelUser->getRowById($orderRow->user_id);
-                if (!$userRow) {
-                    echo "挑战人不存在";
-                    return false;
-                }
-                //发起人姓名
-                $data['originator'] = $userRow->fullname;
-                //支付费用
-                $data['amount'] = ($orderRow->gross / $orderRow->quota); // 支付金额
-                //产品信息
-                $modelGoods = CModel::make('goods_model');
-                $data['goods'] = $modelGoods->getOrderGoods($orderId);
-                // 订单信息
-                $data['order'] = $orderObj;
-
-                CView::show('payment/confirm', $data);
-            } else
-                echo '挑战已结束';
-
+            //响应支付确认页
+            $this->confirm();
         } else {
             //保存支付订单并提交
+            $this->save();
         }
-
-        $code = 0;
-        $message = 'successful';
-        $orderId = (int)$this->input->get('orderId');
-        $type = (int)$this->input->get('type'); //支付方式
-        $type = 2; //支付宝
-        $payItem = $this->_modelPayment->newPayItem($orderId, $type); //产生支付项数据
-        if ($payItem === false) {
-            $code = $this->_modelPayment->errCode;
-            $message = '挑战项目无效';
-        } else
-            CAjax::show($code, $message, array('orderId' => $orderId, 'payId' => $payItem['pay_id']));
-        return false;
-
-        $orderId = (int)$this->input->get('orderId');
-        if ($orderId <= 0) CAjax::show(1001, 'failure');
-        else {
-            //验证订单状态
-            $return = $this->_modelPayment->checkOrder($orderId);
-            if ($return !== true) CAjax::show(1002, 'failure'); //该订单已经过期或无效
-        }
-        $orderObj = $this->_modelPayment->getOrder($orderId);
-        $payId = $this->aliPay($orderObj);
-        $code = 1000;
-        $message = 'failure';
-        if ($payId > 0) {
-            $code = 0;
-            $message = 'successful';
-        }
-        CAjax::show($code, $message, array('orderId' => $orderId, 'payId' => $payId));
     }
 
-
     /**
-     * 提交支付
+     * 响应返回支付确认页
      */
-    public function submit()
+    protected function confirm()
     {
-        $request = $this->input->server('REQUEST_METHOD');
         $orderId = (int)$this->input->get('orderId');
-        if ($request == 'GET') {
-            //响应返回支付订单确认页
-            $modelOrder = CModel::make('order_model');
-            $orderObj = $modelOrder->genOrder($orderId);
-
-            if (($orderRow = $orderObj->row)) {
-                $itemId = $orderRow->item_id;
-                $modItem = CModel::make('planItem_model');
-                $orderObj->item = $modItem->genItem($itemId); //订单项目
-                if (!$orderObj->item->row) {
-                    echo "项目已关闭无效";
-                    return false;
-                }
-            } else {
-                echo "无效的挑战项目";
+        $modelOrder = CModel::make('order_model');
+        $orderObj = $modelOrder->genOrder($orderId);
+        $state = $orderObj->getState();
+        if ($state == 'on') {
+            $data = array();
+            $orderRow = $orderObj->row;
+            $modelUser = CModel::make('user_model');
+            $userRow = $modelUser->getRowById($orderRow->user_id);
+            if (!$userRow) {
+                CView::show('message/error', array('code' => 1001, 'content' => '挑战已关闭'));
                 return false;
             }
-
-            $state = $modelOrder->getOrderState($orderObj);
-            if ($state != 'on') {
-                echo "该挑战已结束,谢谢你的支持"; //订单过期或已经完成
+            //支付项目
+            $modelItem = CModel::make('planItem_model');
+            $data['item'] = (array)$modelItem->orderItemRows($orderRow->id);
+            if (!$data['item']) {
+                CView::show('message/error', array('code' => 1002, 'content' => '挑战项目已关闭'));
                 return false;
             }
-
-
+            //发起人姓名
+            $data['originator'] = $userRow->fullname;
             //支付费用
             $data['amount'] = ($orderRow->gross / $orderRow->quota); // 支付金额
-            //产品信息
-            $data['goods'] = $modItem->getGoodsRecs($orderObj->item->row->id)->row_array();
+            //订单商品信息
+            $modelGoods = CModel::make('goods_model');
+            $data['goods'] = (array)$modelGoods->orderGoodsRows($orderId);
+            if (!$data['goods']) {
+                CView::show('message/error', array('code' => 1003, 'content' => '挑战项目已关闭'));
+                return false;
+            }
             // 订单信息
-            $data['order'] = $orderObj;
-
+            $data['order'] = (array)$orderRow;
             CView::show('payment/confirm', $data);
-        } else {
-            //生成支付提交表单
-            $orderId = (int)$this->input->post('orderId');
-            $type = (int)$this->input->post('type'); //支付方式
-
-            //生成支付订单记录
-            $payItem = $this->_modelPayment->newPayItem($orderId, $type); //产生支付项数据
-            if ($payItem !== false) {
-                $token = base64_encode($payItem['amount']);
-                header('location:' . SITE_URL . '/payment/notify?token=' . $token);
-            } else {
-                echo 'errorCode:' . $this->_modelPayment->errCode;
-            }
-
-            return false;
-
-            //支付宝支付
-            if ($type == 2) {
-                // $form = AliPay::form($payItem);
-                CView::show('payment/formAliPay', array('order' => $payItem));
-                return false;
-            }
-
-            if ($type == 2) {
-                $form = MicroPay::form($payItem);
-                CView::show('payment/formMicroPay', $form);
-                return false;
-            }
-        }
+        } else
+            CView::show('message/error', array('code' => 1000, 'content' => '挑战已结束'));
     }
 
     /**
-     * 支付宝回调接口
+     * 生成并保存支付订单
      */
-    public function apiAliPay()
+    protected function save()
     {
-        $method = $this->input->server('REQUEST_METHOD');
-        if ($method === 'GET') {
-            //响应返回前端通知页面
-            CView::show('payment/notify');
-        } else {
-            //后端通知
-            $data = $this->input->post();
-            $reVal = AliPay::notify($data);
-            if ($reVal === true)
-                $this->_modelPayment->updatePayment($data); //更新支付状态
+        //验证订单
+        $orderId = (int)$this->input->get('orderId');
+        $payType = (int)$this->input->get('type');
+
+        $modelOrder = CModel::make('order_model');
+        $orderObj = $modelOrder->genOrder($orderId);
+        $state = $modelOrder->getState($orderObj);
+        if ($state == 'none') {
+            CView::show('message/error', array('code' => 1000, 'content' => '支付错误'));
+            return false;
         }
+
+        //生成支付订单
+        $payItem = $this->_modelPayment->newPayItem($orderObj, $payType); //产生支付项数据
+
+        //订单支付处理
+        if ($payItem) {
+            if ($payType == 2) {
+                //阿里支付表单
+                //CView::show('payment/formAliPay', array('order' => $payItem));
+                $this->alipay($payItem);
+            } else {
+                CView::show('message/error', array('code' => '1001', 'content' => '该支付目前不支持'));
+            }
+            // $token = base64_encode($payItem['amount']);
+            // header('location:' . SITE_URL . '/payment/notify?token=' . $token);
+        } else {
+            CView::show('message/error', array('code' => '-1', 'content' => '订单支付失败,请重新支付'));
+        }
+        return true;
     }
 
     /**
-     * 模拟通知接口页面
+     * 支付宝交易
+     */
+    public function alipay($data)
+    {
+        $aliPay = new AliPay();
+        $aliPay->disburse($data);
+    }
+
+    /**
+     * 支付宝通知接口
+     */
+    protected function aliPayNotify()
+    {
+        if (REQUEST_METHOD == 'GET') {
+            $aliPay = new AliPay();
+            $return = $aliPay->verify();
+            $tradeNo = $this->input->get('trade_no');
+            $orderId = $this->input->get('out_trade_no');
+            $amount = $this->input->get('total_fee');
+            $data = array('status' => 'fail', 'orderId' => $orderId, 'amount' => $amount);
+            if ($return) {
+                $result = $this->input->get('result'); //交易状态
+                $data['status'] = 'success';
+            }
+            CView::show('payment/result', $data);
+        } else {
+            $postData = $this->input->post('notify_data');
+            $aliPay = new AliPay();
+            $return = $aliPay->notify($postData);
+            if ($return !== false || $return) {
+                //更新订单状态
+                $reVal = $this->_modelPayment->updatePayment($return);
+            }
+        }
+    }
+
+
+    /**
+     * 通知接口
      */
     public function notify()
     {
-        $token = $this->input->get('token');
+        $type = (int)$this->input->get('type');
+        if ($type == 2) {
+            $this->aliPayNotify();
+        }
+        /*$token = $this->input->get('token');
         $data['amount'] = base64_decode($token);
-        CView::show('payment/notify', $data);
+        CView::show('payment/notify', $data);*/
     }
 }

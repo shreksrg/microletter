@@ -28,14 +28,14 @@
         <section class="status1 fix">
             <img class="pic" src="<?= $goods['img'] ?>"/>
 
-            <h2>[<?= $goods['origin'] ?>] <?= $goods['title'] ?></h2>
+            <h2>[<?= Matcher::matchOrigin($goods['origin']) ?>] <?= $goods['title'] ?></h2>
 
-            <div>总价：<span class="price"><?= $goods['price'] ?></span>元</div>
-            <div>元筹集方式：<span class="collect"><?= $order->item->row->title ?></span></div>
+            <div>总价：<span class="price"><?= $order['gross'] ?></span>元</div>
+            <div>筹集方式：<span class="collect"><?= $item['title'] ?></span></div>
         </section>
     </div>
-    <form action="<?= SITE_URL ?>/payment/submit" method="post">
-        <input type="hidden" name="orderId" value="<?= $order->row->id ?>"/>
+    <form action="<?= SITE_URL ?>/payment" method="post">
+        <input type="hidden" name="orderId" value="<?= $order['id'] ?>"/>
         <input type="hidden" name="type" value="2"/>
         <button type="submit" id="btnSubmit" class="pay btn">确定支付</button>
     </form>
