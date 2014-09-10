@@ -16,10 +16,6 @@ class Payment_model extends CI_Model
         return $this->_errCode;
     }
 
-    public function getRow()
-    {
-        $sql = "select * from mic_payment_item where  ";
-    }
 
     /**
      * 新增支付项
@@ -76,6 +72,7 @@ class Payment_model extends CI_Model
         $condition = array('pay_sn' => $data['payNo']);
         $this->db->update('mic_payment_item', $value, $condition);
 
+        //更新订单支付人数
         if ($status == 1) {
             $sql = "select order_id from mic_payment_item where pay_sn=$paySn";
             $query = $this->db->query($sql);
