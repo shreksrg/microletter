@@ -1,5 +1,5 @@
 <?php
-Micro::import('application.libraries.payment.lib.');
+Micro::import('application.libraries.payment.alipay.lib.*');
 
 class AliPay extends CCApplication
 {
@@ -44,9 +44,9 @@ class AliPay extends CCApplication
     public function setOrder($data)
     {
         $order = new stdClass();
-        $order->tradeNo = $data['out_trade_no'];
-        $order->subject = $data['subject'];
-        $order->gross = $data['total_fee'];
+        $order->tradeNo = $data['pay_sn']; //支付订单单号
+        $order->subject = $data['pay_title'];
+        $order->gross = $data['amount'];
         $this->_order = $order;
     }
 
@@ -62,7 +62,7 @@ class AliPay extends CCApplication
         );*/
 
         $this->_config_notify = require(APPPATH . '/config/payment/notify.php');
-        $this->_config_notify = require(APPPATH . '/config/payment/alipay.php');
+        $this->_config_alipay = require(APPPATH . '/config/payment/alipay.php');
     }
 
     /**
@@ -80,7 +80,7 @@ class AliPay extends CCApplication
         $order = $this->_order;
 
         //请求业务参数详细
-        $req_data = '<direct_trade_create_req><notify_url>' . $config['notify_url'] . '</notify_url><call_back_url>' . $config['call_back_url'] . '</call_back_url><seller_account_name>' . $config['seller_email'] . '</seller_account_name><out_trade_no>' . $order->tradeNo . '</out_trade_no><subject>' . $order->subject . '</subject><total_fee>' . $order->gross . '</total_fee><merchant_url>' . $config['merchant_url'] . '</merchant_url></direct_trade_create_req>';
+        $req_data = '<direct_trade_create_req><notify_url>' . $config['notify_url'] . '</notify_url><call_back_url>' . $config['call_back_url'] . '</call_back_url><seller_account_name>' . $this->_config_alipay['seller_mail'] . '</seller_account_name><out_trade_no>' . $order->tradeNo . '</out_trade_no><subject>' . $order->subject . '</subject><total_fee>' . $order->gross . '</total_fee><merchant_url>' . $config['merchant_url'] . '</merchant_url></direct_trade_create_req>';
 
         /************************************************************/
 
@@ -195,6 +195,10 @@ EOF;
                 //交易状态
                 $trade_status = $doc->getElementsByTagName("trade_status")->item(0)->nodeValue;
 
+                $_notifyData['status'] = 0;
+                $_notifyData['paySn'] = $out_trade_no;
+                $_notifyData['tradeSn'] = $trade_no;
+                $_notifyData['gross'] = $gross;
 
                 if ($trade_status == 'TRADE_FINISHED') {
                     //判断该笔订单是否在商户网站中已经做过处理
@@ -210,10 +214,7 @@ EOF;
                     //logResult("这里写入想要调试的代码变量值，或其他运行的结果记录");
 
                     echo "success"; //请不要修改或删除
-
-                    $_notifyData['payId'] = $out_trade_no;
-                    $_notifyData['tradeNo'] = $trade_no;
-                    $_notifyData['gross'] = $gross;
+                    $_notifyData['status'] = 1;
                     return $_notifyData;
                 } else if ($trade_status == 'TRADE_SUCCESS') {
                     //判断该笔订单是否在商户网站中已经做过处理
@@ -227,11 +228,12 @@ EOF;
                     //logResult("这里写入想要调试的代码变量值，或其他运行的结果记录");
 
                     echo "success"; //请不要修改或删除
+                } else {
+                    $_notifyData['status'] = -1;
+                    return $_notifyData;
                 }
             }
-
         }
-
         return false;
 
     }

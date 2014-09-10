@@ -71,8 +71,8 @@ class Payment extends MicroController
     protected function save()
     {
         //验证订单
-        $orderId = (int)$this->input->get('orderId');
-        $payType = (int)$this->input->get('type');
+        $orderId = (int)$this->input->post('orderId');
+        $payType = (int)$this->input->post('type');
 
         $modelOrder = CModel::make('order_model');
         $orderObj = $modelOrder->genOrder($orderId);

@@ -16,6 +16,11 @@ class Payment_model extends CI_Model
         return $this->_errCode;
     }
 
+    public function getRow()
+    {
+        $sql = "select * from mic_payment_item where  ";
+    }
+
     /**
      * 新增支付项
      */
@@ -55,10 +60,31 @@ class Payment_model extends CI_Model
     /**
      * 更新支付项状态
      */
-    public function updatePayment($data)
+    public function updatePayItem($data)
     {
-        
+        $status = $data['status'];
+        $paySn = $data['paySn'];
+        $outSn = $data['tradeSn'];
+        $now = time();
+        $value = array(
+            'status' => $status,
+            'out_sn' => $outSn,
+            'update_time' => $now,
+            'pay_time' => $status == 1 ? $now : null,
+        );
+
+        $condition = array('pay_sn' => $data['payNo']);
+        $this->db->update('mic_payment_item', $value, $condition);
+
+        if ($status == 1) {
+            $sql = "select order_id from mic_payment_item where pay_sn=$paySn";
+            $query = $this->db->query($sql);
+            if ($query->row()) {
+                $orderId = $query->row()->order_id;
+                $sql = "update mic_order set paids=paids+1,update_time=$now where id=$orderId";
+                $this->db->query($sql);
+            }
+        }
         return true;
     }
-
 }
