@@ -11,7 +11,7 @@ class ItemMan extends AdminController
 
     public function index()
     {
-        echo CView::show('admin/item/index', true);
+         CView::show('admin/item/index');
     }
 
     /**

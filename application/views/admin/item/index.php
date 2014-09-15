@@ -2,12 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Full Layout - jQuery EasyUI Demo</title>
+    <title></title>
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/common.css">
     <script type="text/javascript" src="/public/js/ui/jquery.min.js"></script>
     <script type="text/javascript" src="/public/js/ui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/public/js/ui/common.js?v=<?= time() ?>"></script>
 </head>
 
 <body>
@@ -21,24 +22,17 @@
             <th data-options="field:'id',width:80">ID</th>
             <th data-options="field:'title',width:480,align:'left'">项目标题</th>
             <th data-options="field:'grade_name',width:120,align:'left'">人品等级</th>
-            <th data-options="field:'gross',width:80,align:'left'">项目价格</th>
-            <th data-options="field:'period',width:60,align:'center'">期限(小时)</th>
-            <th data-options="field:'quota',width:60,align:'center'">配额(人)</th>
+            <th data-options="field:'gross',width:100,align:'center'" formatter="formatAmount">项目价格</th>
+            <th data-options="field:'period',width:100,align:'center'">期限(小时)</th>
+            <th data-options="field:'quota',width:80,align:'center'">配额(人)</th>
             <th data-options="field:'status',width:60,align:'center'" formatter="formatStatus">状态</th>
+            <th data-options="field:'add_time',width:150,align:'left'" formatter="formatTime">创建时间</th>
         </tr>
         </thead>
     </table>
 </div>
 <script>
-    function formatStatus(val, row) {
-        var txt = 'on';
-        if (val <= 0) {
-            txt = '<span style="color:red;">off</span>';
-        } else {
-            txt = '<span style="color:green;">on</span>';
-        }
-        return txt;
-    }
+
 
 </script>
 

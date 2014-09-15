@@ -2,12 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Full Layout - jQuery EasyUI Demo</title>
+    <title></title>
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/common.css">
     <script type="text/javascript" src="/public/js/ui/jquery.min.js"></script>
     <script type="text/javascript" src="/public/js/ui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/public/js/ui/common.js?v=<?=time()?>"></script>
 </head>
 
 <body>
@@ -18,11 +19,12 @@
         <thead>
         <tr>
             <th data-options="field:'ck',checkbox:true"></th>
-            <th data-options="field:'id',width:80">ID</th>
-            <th data-options="field:'mobile',width:120,align:'center'">手机号</th>
-            <th data-options="field:'type',width:60,align:'left'" formatter="formatType">用户类型</th>
-            <th data-options="field:'fullname',width:120,align:'left'">用户姓名</th>
+            <th data-options="field:'id',width:60">ID</th>
+            <th data-options="field:'mobile',width:150,align:'center'">手机号</th>
+            <th data-options="field:'type',width:80,align:'center'" formatter="formatUserType">用户类型</th>
+            <th data-options="field:'fullname',width:150,align:'center'">用户姓名</th>
             <th data-options="field:'status',width:60,align:'center'" formatter="formatStatus">状态</th>
+            <th data-options="field:'add_time',width:180,align:'left'" formatter="formatTime">创建时间</th>
         </tr>
         </thead>
     </table>
@@ -51,25 +53,9 @@
 </div>
 
 <script>
-    function formatStatus(val, row) {
-        var txt = 'on';
-        if (val <= 0) {
-            txt = '<span style="color:red;">off</span>';
-        } else {
-            txt = '<span style="color:green;">on</span>';
-        }
-        return txt;
-    }
 
-    function formatType(val, row) {
-        var txt;
-        if (val <= 0) {
-            txt = '<span style="color:red;">管理员</span>';
-        } else {
-            txt = '<span style="color:green;">会员</span>';
-        }
-        return txt;
-    }
+
+
 
 </script>
 

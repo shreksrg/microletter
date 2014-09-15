@@ -11,7 +11,7 @@ class UserMan extends AdminController
 
     public function index()
     {
-        echo CView::show('admin/user/index', true);
+         CView::show('admin/user/index');
     }
 
     /**

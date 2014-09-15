@@ -11,7 +11,7 @@ class OrderMan extends AdminController
 
     public function index()
     {
-        echo CView::show('admin/order/index', true);
+         CView::show('admin/order/index');
     }
 
     /**

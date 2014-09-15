@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Full Layout - jQuery EasyUI Demo</title>
+    <title><?= MCIRO_WEBSITE_TITLE ?></title>
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/common.css">
@@ -12,6 +12,8 @@
 <body class="easyui-layout">
 <div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">
     人品大挑战管理
+    <span style="float: right"><a href="<?= SITE_URL ?>/admin/loginman/logout"
+                                  onclick="return logout(this);">登出</a></span>
 </div>
 <div data-options="region:'west',split:true,title:'West'" style="width:150px;padding:10px;">
 
@@ -35,5 +37,15 @@
         $('iframe').attr('src', $(this).attr('href'));
         return false;
     })
+
+    function logout(e) {
+        var url = $(e).attr('href');
+        $.get(url, null, function (rep) {
+            if (rep.code == 0) {
+                location.href = '<?=SITE_URL?>/admin/loginman';
+            } else alert('登出失败');
+        }, 'json')
+        return false;
+    }
 </script>
 </html>

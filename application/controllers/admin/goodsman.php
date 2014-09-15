@@ -11,7 +11,7 @@ class GoodsMan extends AdminController
 
     public function index()
     {
-        echo CView::show('admin/goods/index', true);
+         CView::show('admin/goods/index');
     }
 
     public function goods()

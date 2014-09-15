@@ -2,12 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Full Layout - jQuery EasyUI Demo</title>
+    <title></title>
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/common.css">
     <script type="text/javascript" src="/public/js/ui/jquery.min.js"></script>
     <script type="text/javascript" src="/public/js/ui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/public/js/ui/common.js?v=<?=time()?>"></script>
+
 </head>
 
 <body>
@@ -17,15 +19,14 @@
            data-options="rownumbers:false,singleSelect:true,method:'get',pageSize:10">
         <thead>
         <tr>
-            <th data-options="field:'ck',checkbox:true"></th>
             <th data-options="field:'id',width:60">ID</th>
             <th data-options="field:'pay_sn',width:180,align:'left'">支付编码</th>
             <th data-options="field:'out_sn',width:180,align:'left'">外部交易号</th>
-            <th data-options="field:'amount',width:60,align:'center'">支付金额</th>
-            <th data-options="field:'type',width:80,align:'center'">支付方式</th>
-            <th data-options="field:'status',width:80,align:'center'">支付状态</th>
-            <th data-options="field:'add_time',width:120,align:'left'">创建日期</th>
-            <th data-options="field:'pay_time',width:120,align:'left'">支付日期</th>
+            <th data-options="field:'amount',width:100,align:'center'" formatter="formatAmount">支付金额</th>
+            <th data-options="field:'type',width:80,align:'center'" formatter="formatPayType">支付方式</th>
+            <th data-options="field:'status',width:80,align:'center'" formatter="formatPayState">支付状态</th>
+            <th data-options="field:'add_time',width:160,align:'left'" formatter="formatTime">创建日期</th>
+            <th data-options="field:'pay_time',width:160,align:'left'" formatter="formatTime">支付日期</th>
         </tr>
         </thead>
     </table>
@@ -35,15 +36,7 @@
 
 
 <script>
-    function formatStatus(val, row) {
-        var txt = 'on';
-        if (val <= 0) {
-            txt = '<span style="color:red;">off</span>';
-        } else {
-            txt = '<span style="color:green;">on</span>';
-        }
-        return txt;
-    }
+
 
 </script>
 

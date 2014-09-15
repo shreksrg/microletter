@@ -189,4 +189,35 @@ class PayMan_model extends CI_Model
         }
         return $list;
     }
+
+    /**
+     * 执行退款
+     */
+    public function doRefund($id)
+    {
+        if (is_array($id))
+            $id = implode(',', $id);
+        $sql = "select * from mic_refund where isdel=0 and status<=0 and id in($id)";
+        $query = $this->db->query($sql);
+        if ($query->row()) {
+            foreach ($query->result() as $row) {
+                $data['refundSn'] = $row->refund_sn;
+                $data['outSn'] = $row->out_sn;
+                $data['amount'] = $row->amount;
+                $data['type'] = $row->type;
+                //支付宝退款
+                if ($data['type'] == 2) {
+                    // AliPay::refund($data);
+                    // 以下代码未模拟退款成功，更新退款状态
+                    $now = time();
+                    $values = array(
+                        'status' => 1,
+                        'refund_time' => $now,
+                        'update_time' => $now,
+                    );
+                    $this->db->update('mic_refund', $values, array('id' => $row->id));
+                }
+            }
+        }
+    }
 }

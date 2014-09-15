@@ -2,12 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Full Layout - jQuery EasyUI Demo</title>
+    <title></title>
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/common.css">
     <script type="text/javascript" src="/public/js/ui/jquery.min.js"></script>
     <script type="text/javascript" src="/public/js/ui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/public/js/ui/common.js?v=<?= time() ?>"></script>
 </head>
 
 <body>
@@ -22,17 +23,18 @@
             <th data-options="field:'refund_sn',width:180,align:'left'">退款单号</th>
             <th data-options="field:'pay_sn',width:180,align:'left'">支付单号</th>
             <th data-options="field:'out_sn',width:180,align:'left'">交易单号</th>
-            <th data-options="field:'amount',width:60,align:'center'">退款金额</th>
-            <th data-options="field:'type',width:80,align:'center'">退款方式</th>
-            <th data-options="field:'pay_time',width:120,align:'left'" >支付日期</th>
-            <th data-options="field:'refund_time',width:120,align:'left'">退款日期</th>
+            <th data-options="field:'amount',width:60,align:'center'" formatter="formatAmount">退款金额</th>
+            <th data-options="field:'type',width:80,align:'center'" formatter="formatPayType">退款方式</th>
+            <th data-options="field:'status',width:80,align:'center'" formatter="formatRefundState">退款状态</th>
+            <th data-options="field:'pay_time',width:160,align:'left'" formatter="formatTime">支付日期</th>
+            <th data-options="field:'refund_time',width:160,align:'left'" formatter="formatTime">退款日期</th>
         </tr>
         </thead>
     </table>
     <div id="toolbar" style="padding:5px;height:auto">
         <div style="margin-bottom:5px">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="refreshRefund();">刷新退款记录</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="showPayment();">查看支付</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="doRefund();">退款</a>
         </div>
         <div>
             <div style="padding-bottom: 8px">
@@ -109,6 +111,28 @@
             return false;
         } else {
             alert('请选择订单')
+        }
+    }
+
+    //执行退款
+    function doRefund() {
+        var rows = _micro_dataGrid.datagrid('getSelections');
+        if (rows.length > 0) {
+            var ids = [];
+            for (var i = 0 in rows) {
+                ids[i] = rows[i]['id'];
+            }
+            $.post('<?=SITE_URL?>/admin/payman/refund?r=do', {'id': ids}, function (rep) {
+                if (rep.code == 0) {
+                    _micro_dataGrid.datagrid('reload')
+                } else {
+                    alert('退款操作失败');
+                }
+            }, 'json');
+            $('#frmPayment').attr('src', '<?=SITE_URL?>/admin/payman?orderId=' + row.id)
+            return false;
+        } else {
+            alert('请选择退款单')
         }
     }
 

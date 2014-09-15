@@ -56,6 +56,13 @@ class PayMan extends AdminController
             $list = $this->_modelPay->refunds($page, $rows, $criteria);
             echo json_encode($list);
         }
+
+        //执行退款
+        if ($r == 'do') {
+            $id = $this->input->post('id');
+            $return = $this->_modelPay->doRefund($id);
+            CAjax::show(0, 'successful');
+        }
     }
 
 

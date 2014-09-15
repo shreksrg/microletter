@@ -2,12 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Full Layout - jQuery EasyUI Demo</title>
+    <title></title>
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="/public/js/ui/themes/common.css">
     <script type="text/javascript" src="/public/js/ui/jquery.min.js"></script>
     <script type="text/javascript" src="/public/js/ui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/public/js/ui/common.js?v=<?=time()?>"></script>
 </head>
 
 <body>
@@ -20,13 +21,13 @@
             <th data-options="field:'ck',checkbox:true"></th>
             <th data-options="field:'id',width:80">ID</th>
             <th data-options="field:'sn',width:240,align:'left'">订单编码</th>
-            <th data-options="field:'gross',width:120,align:'center'">订单金额</th>
-            <th data-options="field:'quota',width:120,align:'center'">配额人数</th>
-            <th data-options="field:'paids',width:120,align:'center'">支付人数</th>
-            <th data-options="field:'expire',width:120,align:'left'">截止日期</th>
-            <th data-options="field:'status',width:120,align:'center'">状态</th>
-            <th data-options="field:'add_time',width:120,align:'left'">下单日期</th>
-            <th data-options="field:'achieve_time',width:120,align:'left'">成交日期</th>
+            <th data-options="field:'gross',width:120,align:'center'" formatter="formatAmount">订单金额</th>
+            <th data-options="field:'quota',width:100,align:'center'">配额人数</th>
+            <th data-options="field:'paids',width:100,align:'center'">支付人数</th>
+            <th data-options="field:'status',width:100,align:'center'" formatter="formatStatus">状态</th>
+            <th data-options="field:'expire',width:150,align:'left'" formatter="formatTime">截止日期</th>
+            <th data-options="field:'add_time',width:150,align:'left'" formatter="formatTime">下单日期</th>
+            <th data-options="field:'achieve_time',width:150,align:'left'" formatter="formatTime">成交日期</th>
             <!-- <th data-options="field:'type',width:60,align:'left'" formatter="formatType">用户类型</th>-->
         </tr>
         </thead>
@@ -74,15 +75,7 @@
 
 
 <script>
-    function formatStatus(val, row) {
-        var txt = 'on';
-        if (val <= 0) {
-            txt = '<span style="color:red;">off</span>';
-        } else {
-            txt = '<span style="color:green;">on</span>';
-        }
-        return txt;
-    }
+
 
 </script>
 

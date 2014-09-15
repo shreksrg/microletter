@@ -10,8 +10,10 @@ class Panel extends AdminController
     public function __construct()
     {
         parent::__construct();
-       // $this->_modelItem = CModel::make('admin/index');
+        // $this->_modelItem = CModel::make('admin/index');
     }
+
+
 
     /**
      * 项目列表首页

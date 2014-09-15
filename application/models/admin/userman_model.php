@@ -95,7 +95,7 @@ class UserMan_model extends CI_Model
     }
 
     /**
-     * 删除项目
+     * 删除用户
      */
     public function deleteUser($id)
     {
@@ -122,5 +122,7 @@ class UserMan_model extends CI_Model
         $return = $this->db->query($sql, array($password));
         return $return;
     }
+
+
 
 }
